@@ -1,0 +1,86 @@
+
+/*Generic Styles*/
+
+body {
+  text-align: center;
+}
+
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  animation: App-logo-spin infinite 20s linear;
+  height: 35px;
+}
+
+.App-header {
+  background-color: #222;
+  height: auto;
+  color: white;
+  box-shadow: 2px 8px 5px 5px gray;
+}
+
+.App-title {
+  font-size: 1.5em;
+}
+
+.App-intro {
+  font-size: large;
+}
+
+@keyframes App-logo-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/*Data Table Styles*/
+
+table-display {
+  text-align: center;
+}
+
+table {
+  border: 1px solid black;
+  border-radius: 15px;
+  padding: 4px;
+  margin: auto;
+  box-shadow: 2px 2px 2px 2px gray;
+}
+
+
+tr, td, th {
+  border-radius: 10px;  
+  border: 1px solid gray;
+  padding: 5px;
+}
+
+td:hover {
+  background-color: lightgray;
+}
+
+.active {
+  color: red;
+}
+
+.inactive {
+  color: black;
+}
+
+td.actions {
+  background-color: lightgray;
+
+}
+
+/*Buttons*/
+
+ button {
+   border: 0;
+   background-color: lightgray;
+
+ }
+
+ button:hover {
+  color: blue;
+  
+ }
