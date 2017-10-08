@@ -1,4 +1,6 @@
-[{
+{
+    "bookList":
+[    {
     "id": 1,
     "author": "J.D. Salinger",
     "title": "The Catcher In The Rye",
@@ -26,3 +28,4 @@
     "genre": "Fiction",
     "year": 1909
 }]
+}
