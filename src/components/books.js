@@ -6,74 +6,92 @@ export default class Books extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            bookList: [
-                {
-                    id: 1,
-                    author: "J.D. Salinger",
-                    title: "The Catcher In The Rye",
-                    genre: "Fiction",
-                    year: 1951
-                },
-                {
-                    id: 2,
-                    author: "Marissa V. Snyder",
-                    title: "Poison Study",
-                    genre: "Fiction",
-                    year: 2005
-                },
-                {
-                    id: 3,
-                    author: "Vera Nazarian",
-                    title: "Cobweb Bride",
-                    genre: "Fiction",
-                    year: 2013
-                },
-                {
-                    id: 4,
-                    author: "Gene Stratton-Porter",
-                    title: "A Girl of the Limberlost",
-                    genre: "Fiction",
-                    year: 1909
-                }
-            ]
-
+            author: "",
+            title: "",
+            genre: "",
+            year: null,
+            bookList: []
         };
+
+        this.addData = this.addData.bind(this)
+        this.editData = this.editData.bind(this)
+        this.deleteData = this.deleteData.bind(this)
+
     }
 
-    addData() {
-        alert('Add')
+    addData(newBook) {
+
+        console.log("Back in books.js:")
+        console.log(newBook)
+
+        this.setState(
+            {
+                bookList: [...this.state.bookList,
+                {
+                    id: '',
+                    author: newBook.author,
+                    title: newBook.title,
+                    genre: newBook.genre,
+                    year: newBook.year
+                }]
+            })
+
+        console.log("After add: state:")
+        console.log(this.state.bookList)
     }
 
-    deleteData(book, allBooks) {
+    deleteData(book) {
         //receives specific book to delete
 
+        console.log("This book received:")
         console.log(book)
-        console.log(book.title)
-        let newBook = Object.assign({}, allBooks)
-        console.log(newBook)
-        
-        newBook.filter(b => b.id !== book.id)
-        console.log(newBook)
-        this.setState({bookList: newBook})
+
+        //console.log("This book's ID:")
+        //console.log(book.id)
+
+        let allBooks = this.state.bookList
+
+        console.log("Copy of all current books:")
+        console.log(allBooks)
+
+        //Temporary index locator & filter:
+
+        let index = allBooks.map(obj => obj.title).indexOf(book.title);
+    
+        console.log("Index of the book to delete")
+        console.log(index)
+
+        //let newBooks = allBooks.splice(index, 0)
+
+        let newBooks = allBooks.filter(b => b[index] !== allBooks[index])
         
 
+        console.log("After delete:")
+        console.log(newBooks)
 
-    }
+/*          this.setState(
+            {
+                bookList: newBooks
+            })
+
+        console.log("After delete: state:")
+        console.log(this.state.bookList) */
+    }//end delete
 
     editData(book) {
         //receives whole book model
         alert('edit' + book.id)
 
-    }
+    }//end edit
 
     render() {
 
         return (
             <div className="table-display">
                 <TableData books={this.state.bookList}
-                onEdit={this.editData}
-                onDelete={this.deleteData}
-                onAdd={this.addData}/>
+                    onEdit={this.editData}
+                    onDelete={this.deleteData}
+                    onAdd={this.addData} />
             </div>
         )
     }
