@@ -3,6 +3,8 @@
 
 body {
   text-align: center;
+  font-family: Georgia, 'Times New Roman', Times, serif;
+  font-size: 10pt;
 }
 
 .App {
@@ -34,10 +36,23 @@ body {
   to { transform: rotate(360deg); }
 }
 
+.search {
+  width: 50%;
+  border: 1px solid gray;
+  border-radius: 2px;
+  margin: auto;
+  padding: 10px;
+  box-shadow:  2px 2px 2px 2px gray;
+}
+
 /*Data Table Styles*/
 
 table-display {
   text-align: center;
+}
+
+.tabled {
+  padding: 15px;
 }
 
 table {
@@ -50,17 +65,13 @@ table {
 
 
 tr, td, th {
-  border-radius: 10px;  
+  border-radius: 5px;  
   border: 1px solid gray;
   padding: 5px;
 }
 
 td:hover {
   background-color: lightgray;
-}
-
-.active {
-  color: red;
 }
 
 .inactive {
@@ -72,15 +83,29 @@ td.actions {
 
 }
 
+tr.shade {
+  background-color: lightblue;
+  font-weight: bold;
+}
+
 /*Buttons*/
 
  button {
    border: 0;
    background-color: lightgray;
+   font-size: 12px;
+   font-family: Arial, Helvetica, sans-serif;
 
  }
 
  button:hover {
   color: blue;
   
+ }
+
+ /*Input*/
+ input {
+   font-family: 'Courier New', Courier, monospace;
+   font-size: 10pt;
+   font-weight: bold;
  }

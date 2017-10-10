@@ -1,0 +1,11 @@
+/Users/tanyalandreth/Desktop/sds-react-project/project/backend/backend/bin/Debug/netcoreapp2.0/backend.deps.json
+/Users/tanyalandreth/Desktop/sds-react-project/project/backend/backend/bin/Debug/netcoreapp2.0/backend.runtimeconfig.json
+/Users/tanyalandreth/Desktop/sds-react-project/project/backend/backend/bin/Debug/netcoreapp2.0/backend.runtimeconfig.dev.json
+/Users/tanyalandreth/Desktop/sds-react-project/project/backend/backend/bin/Debug/netcoreapp2.0/backend.dll
+/Users/tanyalandreth/Desktop/sds-react-project/project/backend/backend/bin/Debug/netcoreapp2.0/backend.pdb
+/Users/tanyalandreth/Desktop/sds-react-project/project/backend/backend/obj/Debug/netcoreapp2.0/backend.csprojResolveAssemblyReference.cache
+/Users/tanyalandreth/Desktop/sds-react-project/project/backend/backend/obj/Debug/netcoreapp2.0/backend.csproj.CoreCompileInputs.cache
+/Users/tanyalandreth/Desktop/sds-react-project/project/backend/backend/obj/Debug/netcoreapp2.0/backend.AssemblyInfoInputs.cache
+/Users/tanyalandreth/Desktop/sds-react-project/project/backend/backend/obj/Debug/netcoreapp2.0/backend.AssemblyInfo.cs
+/Users/tanyalandreth/Desktop/sds-react-project/project/backend/backend/obj/Debug/netcoreapp2.0/backend.dll
+/Users/tanyalandreth/Desktop/sds-react-project/project/backend/backend/obj/Debug/netcoreapp2.0/backend.pdb

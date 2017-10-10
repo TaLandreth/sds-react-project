@@ -1,100 +1,72 @@
 import React, { Component } from 'react'
+import { connect } from "react-redux"
 import '../App.css';
 import TableData from "./tabledata"
+import { getTheBooks, addABook, deleteBook, editBook, searchFor } from "../dispatcher/actions"
 
-export default class Books extends Component {
+class Books extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            author: "",
-            title: "",
-            genre: "",
-            year: null,
-            bookList: []
         };
 
         this.addData = this.addData.bind(this)
         this.editData = this.editData.bind(this)
         this.deleteData = this.deleteData.bind(this)
+        this.searchData = this.searchData.bind(this)
+    }
+
+    componentDidMount() {
+        getTheBooks(this.props.dispatch)
+        console.log("componentDidMount:")
+        console.log(this.props.bookList)
 
     }
 
     addData(newBook) {
+        addABook(this.props.dispatch, newBook)
 
-        console.log("Back in books.js:")
-        console.log(newBook)
-
-        this.setState(
-            {
-                bookList: [...this.state.bookList,
-                {
-                    id: '',
-                    author: newBook.author,
-                    title: newBook.title,
-                    genre: newBook.genre,
-                    year: newBook.year
-                }]
-            })
-
-        console.log("After add: state:")
-        console.log(this.state.bookList)
     }
 
     deleteData(book) {
-        //receives specific book to delete
+    deleteBook(this.props.dispatch, book)
 
-        console.log("This book received:")
-        console.log(book)
-
-        //console.log("This book's ID:")
-        //console.log(book.id)
-
-        let allBooks = this.state.bookList
-
-        console.log("Copy of all current books:")
-        console.log(allBooks)
-
-        //Temporary index locator & filter:
-
-        let index = allBooks.map(obj => obj.title).indexOf(book.title);
-    
-        console.log("Index of the book to delete")
-        console.log(index)
-
-        //let newBooks = allBooks.splice(index, 0)
-
-        let newBooks = allBooks.filter(b => b[index] !== allBooks[index])
-        
-
-        console.log("After delete:")
-        console.log(newBooks)
-
-/*          this.setState(
-            {
-                bookList: newBooks
-            })
-
-        console.log("After delete: state:")
-        console.log(this.state.bookList) */
     }//end delete
 
     editData(book) {
-        //receives whole book model
-        alert('edit' + book.id)
+        editBook(this.props.dispatch, book)
+
 
     }//end edit
 
+    searchData(data) {
+        console.log("Sending to dispatcher:")
+        console.log(data)
+        searchFor(this.props.dispatch, data)
+    }
+
     render() {
+        let bookies = this.props.bookList
 
         return (
             <div className="table-display">
-                <TableData books={this.state.bookList}
+                <TableData books={bookies}
                     onEdit={this.editData}
                     onDelete={this.deleteData}
-                    onAdd={this.addData} />
+                    onAdd={this.addData}
+                    onSearch={this.searchData}
+                    searchResults={this.props.searchResults} />
             </div>
         )
     }
 
 
 }
+
+export default connect(
+    store => ({
+        bookList: store.bookData,
+        searchResults: store.searchList
+
+    })
+)(Books);
