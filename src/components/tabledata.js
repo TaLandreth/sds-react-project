@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import '../App.css';
-import BookModel from '../models/bookmodel'
 
 export default class TableData extends Component {
     constructor(props) {
@@ -43,9 +42,7 @@ export default class TableData extends Component {
     //Initial click handlers:
     adding = e => {
         //make me a new object from what's in the fields
-        let newBook = new BookModel();
-        
-        newBook = Object.assign({BookModel},
+        let newBook = Object.assign({},
             {
                 author: this.inputAuthor.value,
                 title: this.inputTitle.value,
@@ -75,8 +72,8 @@ export default class TableData extends Component {
     }
 
     save(i, a, t, g, y) {
-        let bookModel = Object.assign({}, { id: i, author: a, title: t, genre: g, year: y })
-        this.props.onEdit(bookModel)
+        let saveBook = Object.assign({}, { id: i, author: a, title: t, genre: g, year: y })
+        this.props.onEdit(saveBook)
         this.setState({ editFlag: false })
     }
 

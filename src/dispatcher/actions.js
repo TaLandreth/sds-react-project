@@ -11,8 +11,6 @@ export function getTheBooks(dispatch) {
 
     axios.get(BASE_URL)
         .then((response) => {
-            //Set the header to be used for future authentication
-            console.log(response.data)
             dispatch({ type: "GET_BOOKS_FINISHED", payload: response.data })
         })
         .catch((err) => {
@@ -23,16 +21,11 @@ export function getTheBooks(dispatch) {
 
 //ADD
 export function addABook(dispatch, newBook) {
-
-    console.log("actions - ")
-    console.log(newBook)
-
     dispatch({
         type: "ADD_BOOK_STARTED"
     })
     axios.post(BASE_URL, newBook)
         .then((response) => {
-            console.log(response.data)
             dispatch({ type: "ADD_BOOK_FINISHED", payload: response.data })
         })
         .catch((err) => {
@@ -50,7 +43,6 @@ export function deleteBook(dispatch, book) {
 
     axios.delete(BASE_URL + "/" + book.id)
         .then((response) => {
-            //Set the header to be used for future authentication
             dispatch({ type: "DELETE_BOOK_FINISHED", payload: book })
         })
         .catch((err) => {
@@ -67,7 +59,6 @@ export function editBook(dispatch, book) {
 
     axios.put(BASE_URL + "/" + book.id, book)
         .then((response) => {
-            //Set the header to be used for future authentication
             dispatch({ type: "EDIT_BOOK_FINISHED", payload: book })
         })
         .catch((err) => {
@@ -84,7 +75,6 @@ export function searchFor(dispatch, author) {
 
     axios.get("http://localhost:5000/api/search", author)
         .then((response) => {
-            //Set the header to be used for future authentication
             dispatch({ type: "SEARCH_FINISHED", payload: response.data })
         })
         .catch((err) => {

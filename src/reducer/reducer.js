@@ -17,11 +17,8 @@ export default function reducer(store = initialState, action) {
         }
         case "GET_BOOKS_FINISHED": {
             console.log('### Retrieval finished!')
-            console.log(action.payload)
             return { ...store, bookData: action.payload, APICallInProgress: false }
         }
-
-
 
         //ADD
         case "ADD_BOOK_STARTED": {
@@ -41,8 +38,7 @@ export default function reducer(store = initialState, action) {
         }
 
         case "EDIT_BOOK_FINISHED": {
-            console.log('### Edit finished! Payload:')
-            console.log(action.payload)
+            console.log('### Edit finished!')
             return { ...store, bookData: edit(store.bookData, action.payload), APICallInProgress: false }
         }
 
@@ -53,8 +49,6 @@ export default function reducer(store = initialState, action) {
         }
 
         case "DELETE_BOOK_FINISHED": {
-            console.log('Reducer - Store Before delete:')
-            console.log(store.bookData)
             console.log('### Delete finished!')
             return { ...store, bookData: remove(store.bookData, action.payload), APICallInProgress: false }
         }
@@ -85,9 +79,6 @@ export function add(books, newbook) {
     let newBookArr = books.slice();
     newBookArr.push(newbook)
 
-    console.log("In reducer helper, to add:")
-    console.log(newBookArr)
-
     return newBookArr
 }
 
@@ -95,10 +86,7 @@ export function add(books, newbook) {
 export function edit(books, edit) {
     let newCollection = books.slice()
 
-    console.log("In helper: new array")
-    console.log(newCollection)
-
-    newCollection.map(function (b) {
+    newCollection.map((b) => {
         if (b.id === edit.id) {
             b.author = edit.author;
             b.title = edit.title;
@@ -108,8 +96,6 @@ export function edit(books, edit) {
 
     })
 
-    console.log("In helper: edit result")
-    console.log(newCollection)
     return newCollection;
 }
 
@@ -117,18 +103,13 @@ export function edit(books, edit) {
 export function remove(books, newbook) {
 
     let newBookArr = books.slice();
-    console.log("In helper, copy of store array:")
-    console.log(newBookArr)
 
     newBookArr = books.filter(b => b.id !== newbook.id)
-
-    console.log("In helper, return to store after delete:")
-    console.log(newBookArr)
 
     return newBookArr;
 }
 
-//---------- SEARCHING ------------------
+//---------- SEARCHING ------------------ BETA ---------
 export function searching(books, thing) {
     let bookies = books.slice()
     console.log(bookies)

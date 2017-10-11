@@ -7,9 +7,6 @@ import { getTheBooks, addABook, deleteBook, editBook, searchFor } from "../dispa
 class Books extends Component {
     constructor(props) {
         super(props);
-        this.state = {
-        };
-
         this.addData = this.addData.bind(this)
         this.editData = this.editData.bind(this)
         this.deleteData = this.deleteData.bind(this)
@@ -18,27 +15,21 @@ class Books extends Component {
 
     componentDidMount() {
         getTheBooks(this.props.dispatch)
-        console.log("componentDidMount:")
-        console.log(this.props.bookList)
-
-    }
+    }//end startup
 
     addData(newBook) {
         addABook(this.props.dispatch, newBook)
-    }
+    }//end add
 
     deleteData(book) {
-    deleteBook(this.props.dispatch, book)
-
+        deleteBook(this.props.dispatch, book)
     }//end delete
 
     editData(book) {
         editBook(this.props.dispatch, book)
-
-
     }//end edit
 
-    searchData(data) {
+    searchData(data) { //BETA
         console.log("Sending to dispatcher:")
         console.log(data)
         searchFor(this.props.dispatch, data)
@@ -58,14 +49,11 @@ class Books extends Component {
             </div>
         )
     }
-
-
 }
 
 export default connect(
     store => ({
         bookList: store.bookData,
-        searchResults: store.searchList
-
+        searchResults: store.searchList //beta
     })
 )(Books);
