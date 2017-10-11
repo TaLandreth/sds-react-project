@@ -1,16 +1,19 @@
 ﻿<Properties StartupConfiguration="{DD911711-1B3B-41F0-872E-21A7240457F4}|Default" NuGet.AddPackagesDialog.IncludePrerelease="True">
-  <MonoDevelop.Ide.Workbench ActiveDocument="backend/Model/Model.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="backend/Program.cs">
     <Files>
-      <File FileName="backend/Controllers/MyController.cs" Line="27" Column="51" />
+      <File FileName="backend/Controllers/MyController.cs" Line="28" Column="1" />
       <File FileName="backend/Store/Store.cs" Line="76" Column="46" />
       <File FileName="backend/Startup.cs" Line="35" Column="14" />
       <File FileName="backend/Store/StoreBase.cs" Line="4" Column="18" />
       <File FileName="backend/Model/Model.cs" Line="15" Column="1" />
+      <File FileName="backend/Program.cs" Line="17" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore />
+    <BreakpointStore>
+      <Breakpoint file="/Users/tanyalandreth/Desktop/sds-react-project/project/backend/backend/Controllers/MyController.cs" relfile="backend/Controllers/MyController.cs" line="27" column="1" />
+    </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <MultiItemStartupConfigurations />

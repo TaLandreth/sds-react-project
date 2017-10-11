@@ -25,7 +25,6 @@ class Books extends Component {
 
     addData(newBook) {
         addABook(this.props.dispatch, newBook)
-
     }
 
     deleteData(book) {

@@ -82,8 +82,11 @@ export default function reducer(store = initialState, action) {
 //---------- ADD ------------------
 export function add(books, newbook) {
 
-    let newBookArr = books;
+    let newBookArr = books.slice();
     newBookArr.push(newbook)
+
+    console.log("In reducer helper, to add:")
+    console.log(newBookArr)
 
     return newBookArr
 }

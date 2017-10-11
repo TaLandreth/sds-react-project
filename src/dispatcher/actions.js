@@ -32,6 +32,7 @@ export function addABook(dispatch, newBook) {
     })
     axios.post(BASE_URL, newBook)
         .then((response) => {
+            console.log(response.data)
             dispatch({ type: "ADD_BOOK_FINISHED", payload: response.data })
         })
         .catch((err) => {

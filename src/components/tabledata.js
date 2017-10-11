@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import '../App.css';
+import BookModel from '../models/bookmodel'
 
 export default class TableData extends Component {
     constructor(props) {
@@ -42,9 +43,10 @@ export default class TableData extends Component {
     //Initial click handlers:
     adding = e => {
         //make me a new object from what's in the fields
-        let newBook = Object.assign({},
+        let newBook = new BookModel();
+        
+        newBook = Object.assign({BookModel},
             {
-                id: '',
                 author: this.inputAuthor.value,
                 title: this.inputTitle.value,
                 genre: this.inputGenre.value,
@@ -174,8 +176,8 @@ export default class TableData extends Component {
             return (
                 <div className="table-display">
                     <br />
-                    <div className="search">Search for Author:<br />
-                        <input type="text" name="search" placeholder="Enter Author"
+                    <div className="search">
+                        <input type="text" name="search" placeholder="Search By Author"
                             onChange={this.onChangeSearch} />
                         <button onClick={this.searchFor.bind(this, this.state.search)}>Go!</button>
                         <br />
@@ -183,7 +185,7 @@ export default class TableData extends Component {
                 <div className="tabled">
                     <table>
                         <tbody>
-                            <tr><td colSpan="6">Books:</td></tr>
+                            <tr><td colSpan="6" className="intro">Books:</td></tr>
                             <tr className="shade"><td>Author</td><td>Title</td><td>Genre</td><td>Year</td>
                                 <td colSpan="2">Actions:</td></tr>
                             {this.props.books ? this.props.books.map((b) =>
