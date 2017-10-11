@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import '../App.css';
+import BookModel from '../models/bookmodel'
 
 export default class TableData extends Component {
     constructor(props) {
@@ -42,7 +43,7 @@ export default class TableData extends Component {
     //Initial click handlers:
     adding = e => {
         //make me a new object from what's in the fields
-        let newBook = Object.assign({},
+        let newBook = Object.assign(new BookModel(),
             {
                 author: this.inputAuthor.value,
                 title: this.inputTitle.value,
