@@ -37,6 +37,7 @@ class Books extends Component {
 
     render() {
         let bookies = this.props.bookList
+        let searchies = this.props.searchResults
 
         return (
             <div className="table-display">
@@ -45,7 +46,7 @@ class Books extends Component {
                     onDelete={this.deleteData}
                     onAdd={this.addData}
                     onSearch={this.searchData}
-                    searchResults={this.props.searchResults} />
+                    search={searchies} />
             </div>
         )
     }

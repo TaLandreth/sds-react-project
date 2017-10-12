@@ -109,24 +109,20 @@ export function remove(books, newbook) {
     return newBookArr;
 }
 
-//---------- SEARCHING ------------------ BETA ---------
+//---------- SEARCHING ------------------
 export function searching(books, thing) {
     let bookies = books.slice()
-    console.log(bookies)
-    var obj = Object.assign({})
-    var results = []
 
-    //loop through array
-    //for every B, find which one matching the condition
-    bookies.forEach(function (b) {
+    var term = thing.toLowerCase()
 
-        obj = Object.assign({},bookies.find(b => b.author === thing.author));
+    var i = 0
+    var searchBooks
+    for (i; i < bookies.length; i++) {
 
-        results.push(obj)
-    })
+        searchBooks = bookies.filter((b) => {
+                return b.author.toLowerCase().includes(term);
+            })
+    }
+    return searchBooks;
 
-    console.log("In reducer: search result")
-    console.log(results)
-    return results;
 }
-

@@ -66,18 +66,13 @@ export function editBook(dispatch, book) {
         })
 }
 
-//SEARCH
+//SEARCH ---------------------- BETA
 export function searchFor(dispatch, author) {
 
     dispatch({
         type: "SEARCH_STARTED"
     })
 
-    axios.get("http://localhost:5000/api/search", author)
-        .then((response) => {
-            dispatch({ type: "SEARCH_FINISHED", payload: response.data })
-        })
-        .catch((err) => {
-            dispatch({ type: "CALL_FAILED", payload: err })
-        })
+    dispatch({ type: "SEARCH_FINISHED", payload: author })
+
 }

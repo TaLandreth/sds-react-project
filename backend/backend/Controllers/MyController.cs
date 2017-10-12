@@ -70,24 +70,5 @@ namespace backend.Controllers
         }
 
     }//end controller
-
-
-
-
-    [Route("api/search")]
-    public class Search : Controller
-    {
-
-        //SEARCH FOR AUTHOR BOOKS
-        [HttpGet]
-        public IActionResult SearchBooks([FromBody]string thing)
-        {
-            var found = new BookStore().SearchBooks(thing);
-            return new ObjectResult(found);
-        }
-
-    }
-
-
 }
 

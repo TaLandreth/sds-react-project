@@ -20,26 +20,18 @@ export default class TableData extends Component {
             title: '',
             genre: '',
             year: '',
+            //Search
             search: ''
         }
     }
 
-    //View Change handlers:
-    onChangeAuthor = e => { this.setState({ author: e.target.value }) };
-    onChangeTitle = e => { this.setState({ title: e.target.value }) };
-    onChangeGenre = e => { this.setState({ genre: e.target.value }) };
-    onChangeYear = e => { this.setState({ year: e.target.value }) };
-
-    //Edit Change handlers:
-    onChangeEAuthor = e => { this.setState({ eauthor: e.target.value }) };
-    onChangeETitle = e => { this.setState({ etitle: e.target.value }) };
-    onChangeEGenre = e => { this.setState({ egenre: e.target.value }) };
-    onChangeEYear = e => { this.setState({ eyear: e.target.value }) };
-
-    //Search Change handler:
-    onChangeSearch = e => { this.setState({ search: e.target.value }) };
-
-
+    //CONSOLIDATE CHANGE HANDLERS:
+    //copied from Kristen's fantastic idea!
+    changeInputs = e => {
+        this.setState({
+            [e.target.name]: e.target.value
+        })
+    }
     //Initial click handlers:
     adding = e => {
         //make me a new object from what's in the fields
@@ -51,14 +43,25 @@ export default class TableData extends Component {
                 year: this.inputYear.value
             })
 
-        //Send to books:
-        this.props.onAdd(newBook)
+        //Handle issues & send to books:
+        if (newBook.author === "" ||
+            newBook.title === "" ||
+            newBook.genre === "" ||
+            newBook.year === "" || null) {
+            alert("Please enter book data")
+        }
+        else if (isNaN(newBook.year)) {
+            alert("Please enter a valid year")
+        }
+        else {
+            this.props.onAdd(newBook)
 
-        //Clear inputs:
-        this.inputAuthor.value = ""
-        this.inputTitle.value = ""
-        this.inputGenre.value = ""
-        this.inputYear.value = ""
+            //Clear inputs:
+            this.inputAuthor.value = ""
+            this.inputTitle.value = ""
+            this.inputGenre.value = ""
+            this.inputYear.value = ""
+        }
     }
 
     editing(book) {
@@ -74,8 +77,20 @@ export default class TableData extends Component {
 
     save(i, a, t, g, y) {
         let saveBook = Object.assign({}, { id: i, author: a, title: t, genre: g, year: y })
-        this.props.onEdit(saveBook)
-        this.setState({ editFlag: false })
+
+        if (saveBook.author === "" ||
+            saveBook.title === "" ||
+            saveBook.genre === "" ||
+            saveBook.year === "" || null) {
+            alert("Please enter book data")
+        }
+        else if (isNaN(saveBook.year)) {
+            alert("Please enter a valid year")
+        }
+        else {
+            this.props.onEdit(saveBook)
+            this.setState({ editFlag: false })
+        }
     }
 
     cancel = e => {
@@ -83,63 +98,65 @@ export default class TableData extends Component {
     }
 
     remove(book) {
-        this.props.onDelete(book)
+
+        var decision = window.confirm("Delete \"" + book.title + "\", by \"" + book.author + "\"?");
+        if (decision === true) {
+            this.props.onDelete(book)
+        }
 
     }
+
 
     searchFor(a) {
         console.log("Search initiating: for--")
         console.log(a)
+
         this.props.onSearch(a)
 
-        let results = this.props.searchResults
+        this.setState({ searchFlag: true })
 
-        console.log("Any result?")
-        console.log(results)
-
-        if ((this.props.searchResults).length > 0) {
-            this.setState({ searchFlag: true })
-        }
-        else {
-            alert("No results")
-        }
     }
 
 
     render() {
+
         //IF IN EDITING MODE ----------------------------------------------------:
         if (this.state.editFlag) {
             return (
-                <div className="table-display">
+                <div className="edit-display">
+                    <h1>Editing:</h1>
                     <input type="hidden" value={this.state.eid}
                         ref={TableData => this.iputEId = TableData} />
 
                     <input type="text" value={this.state.eauthor}
                         ref={TableData => this.inputEAuthor = TableData}
-                        name="eauthor" placeholder="Author" onChange={this.onChangeEAuthor} /><br />
+                        name="eauthor" placeholder="Author" onChange={this.changeInputs} /><br />
 
                     <input type="text" value={this.state.etitle}
                         ref={TableData => this.inputETitle = TableData}
-                        name="etitle" placeholder="Title" onChange={this.onChangeETitle} /><br />
+                        name="etitle" placeholder="Title" onChange={this.changeInputs} /><br />
 
                     <input type="text" value={this.state.egenre}
                         ref={TableData => this.inputEGenre = TableData}
-                        name="egenre" placeholder="Genre" onChange={this.onChangeEGenre} /><br />
+                        name="egenre" placeholder="Genre" onChange={this.changeInputs} /><br />
 
                     <input type="text" value={this.state.eyear}
                         ref={TableData => this.inputEYear = TableData}
-                        name="eyear" placeholder="Year" onChange={this.onChangeEYear} /> <br />
+                        name="eyear" placeholder="Year" onChange={this.changeInputs} /> <br />
 
-                    <button onClick={this.save.bind(
-                        this, this.state.eid,
-                        this.state.eauthor,
-                        this.state.etitle,
-                        this.state.egenre,
-                        this.state.eyear)}>Save</button>
-                    <button onClick={this.cancel}>Cancel</button>
+                    <div className="edit-btns">
+                        <button onClick={this.save.bind(
+                            this, this.state.eid,
+                            this.state.eauthor,
+                            this.state.etitle,
+                            this.state.egenre,
+                            this.state.eyear)}>Save</button>
+                        <button onClick={this.cancel}>Cancel</button>
+                    </div>
                 </div>)
 
-        }//IF IN SEARCH RESULTS ----------------------------------------------------:
+        }
+        //IF IN SEARCH RESULTS ----------------------------------------------------:
         if (this.state.searchFlag) {
             console.log("search completed")
             return (
@@ -149,7 +166,7 @@ export default class TableData extends Component {
                             <tr><td colSpan="6">Books:</td></tr>
                             <tr className="shade"><td>Author</td><td>Title</td><td>Genre</td><td>Year</td>
                                 <td colSpan="2">Actions:</td></tr>
-                            {this.props.searchResults ? this.props.searchResults.map((b) =>
+                            {this.props.search ? this.props.search.map((b) =>
                                 <tr key={b.id + b.author + b.title + b.genre + b.year}>
                                     <td key={b.author}>{b.author}</td>
                                     <td key={b.title}>{b.title}</td>
@@ -160,7 +177,7 @@ export default class TableData extends Component {
                                         onClick={this.editing.bind(this, b)}>Edit</button></td>
                                     <td className="actions"><button
                                         onClick={this.remove.bind(this, b)}>Delete</button></td>
-                                </tr>) : "No books found"
+                                </tr>) : <tr><td colSpan="6">"No results found"</td></tr>
                             }
                             <tr>
                                 <td colSpan="6"><button onClick={this.cancel}>Return</button></td></tr>
@@ -175,44 +192,44 @@ export default class TableData extends Component {
                 <div className="table-display">
                     <br />
                     <div className="search">
-                        <input type="text" name="search" placeholder="Search By Author"
-                            onChange={this.onChangeSearch} />
+                        <input type="text" className="s" name="search" placeholder="Search By Author (Beta)"
+                            onChange={this.changeInputs} />
                         <button onClick={this.searchFor.bind(this, this.state.search)}>Go!</button>
                         <br />
                     </div>
-                <div className="tabled">
-                    <table>
-                        <tbody>
-                            <tr><td colSpan="6" className="intro">Books:</td></tr>
-                            <tr className="shade"><td>Author</td><td>Title</td><td>Genre</td><td>Year</td>
-                                <td colSpan="2">Actions:</td></tr>
-                            {this.props.books ? this.props.books.map((b) =>
-                                <tr key={b.id + b.author + b.title + b.genre + b.year}>
-                                    <td key={b.author}>{b.author}</td>
-                                    <td key={b.title}>{b.title}</td>
-                                    <td key={b.genre}>{b.genre}</td>
-                                    <td key={b.year}>{b.year}</td>
+                    <div className="tabled">
+                        <table>
+                            <tbody>
+                                <tr><td colSpan="6" className="intro">Books:</td></tr>
+                                <tr className="shade"><td>Author</td><td>Title</td><td>Genre</td><td>Year</td>
+                                    <td colSpan="2">Actions:</td></tr>
+                                {this.props.books ? this.props.books.map((b) =>
+                                    <tr key={b.id + b.author + b.title + b.genre + b.year}>
+                                        <td key={b.author}>{b.author}</td>
+                                        <td key={b.title}>{b.title}</td>
+                                        <td key={b.genre}>{b.genre}</td>
+                                        <td key={b.year}>{b.year}</td>
 
-                                    <td className="actions"><button
-                                        onClick={this.editing.bind(this, b)}>Edit</button></td>
-                                    <td className="actions"><button
-                                        onClick={this.remove.bind(this, b)}>Delete</button></td>
-                                </tr>) : null
-                            }
+                                        <td className="actions"><button
+                                            onClick={this.editing.bind(this, b)}>Edit</button></td>
+                                        <td className="actions"><button
+                                            onClick={this.remove.bind(this, b)}>Delete</button></td>
+                                    </tr>) : null
+                                }
 
-                            <tr><td colSpan="6" className="actions">
-                                <input type="text" ref={TableData => this.inputAuthor = TableData}
-                                    name="author" placeholder="Author" onChange={this.onChangeAuthor} /><br />
-                                <input type="text" ref={TableData => this.inputTitle = TableData}
-                                    name="title" placeholder="Title" onChange={this.onChangeTitle} /><br />
-                                <input type="text" ref={TableData => this.inputGenre = TableData}
-                                    name="genre" placeholder="Genre" onChange={this.onChangeGenre} /><br />
-                                <input type="text" ref={TableData => this.inputYear = TableData}
-                                    name="year" placeholder="Year" onChange={this.onChangeYear} /><br />
-                                <button onClick={this.adding.bind(this)}>Add A Book</button></td></tr>
-                        </tbody>
-                    </table>
-                </div>
+                                <tr><td colSpan="6" className="add">
+                                    <input type="text" ref={TableData => this.inputAuthor = TableData}
+                                        name="author" placeholder="Author" onChange={this.changeInputs} /><br />
+                                    <input type="text" ref={TableData => this.inputTitle = TableData}
+                                        name="title" placeholder="Title" onChange={this.changeInputs} /><br />
+                                    <input type="text" ref={TableData => this.inputGenre = TableData}
+                                        name="genre" placeholder="Genre" onChange={this.changeInputs} /><br />
+                                    <input type="text" ref={TableData => this.inputYear = TableData}
+                                        name="year" placeholder="Year" onChange={this.changeInputs} /><br />
+                                    <button onClick={this.adding.bind(this)}>Add A Book</button></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             )//end return
         }//else

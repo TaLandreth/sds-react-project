@@ -28,11 +28,6 @@ body {
   font-size: 2em;
 }
 
-@keyframes App-logo-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
 .search {
   width: 50%;
   border: 1px solid gray;
@@ -41,12 +36,30 @@ body {
   padding: 10px;
   box-shadow:  2px 2px 2px 2px gray;
   background-color: lightblue;
+  background-image: url('images/cardcatalog.jpg');
+  
 }
 
 /*Data Table Styles*/
 
-table-display {
+.table-display {
   text-align: center;
+}
+
+.edit-display {
+  width: 50%;
+  margin: auto;
+  border: 1px solid black;
+  border-radius: 3px;
+  box-shadow:  2px 2px 2px 2px gray;
+  text-align: center;
+  background-image: url('images/edit.jpg');
+  color: black;
+  font-size: 20px;
+}
+
+.edit-btns {
+  padding: 15px;
 }
 
 .tabled {
@@ -80,7 +93,10 @@ td:hover {
 
 td.actions {
   background-color: lightgray;
+}
 
+td.add {
+  background-color: lightblue;
 }
 
 tr.shade {
@@ -104,7 +120,6 @@ tr.shade {
 
  button:hover {
   color: purple;
-  
  }
 
  /*Input*/
@@ -112,4 +127,8 @@ tr.shade {
    font-family: 'Courier New', Courier, monospace;
    font-size: 10pt;
    font-weight: bold;
+ }
+
+ input.s {
+   width: 200px;
  }
