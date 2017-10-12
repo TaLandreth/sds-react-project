@@ -1,6 +1,7 @@
 let initialState = {
     bookData: [],
-    searchList: []
+    searchList: [],
+    page: []
 }
 export default function reducer(store = initialState, action) {
 
@@ -17,7 +18,29 @@ export default function reducer(store = initialState, action) {
         }
         case "GET_BOOKS_FINISHED": {
             console.log('### Retrieval finished!')
-            return { ...store, bookData: action.payload, APICallInProgress: false }
+            return { ...store, page: action.payload, APICallInProgress: false }
+        }
+
+        //GET PAGE:
+        case "GET_PAGE_STARTED": {
+            console.log("### Retrieving books.....")
+            return { ...store, APICallInProgress: true, APICallFailed: null }
+        }
+        case "GET_PAGE_FINISHED": {
+            console.log('### Retrieval finished!')
+            return { ...store, page: action.payload, APICallInProgress: false }
+        }
+
+
+        //GET VIEW:
+        case "GET_VIEW_STARTED": {
+            console.log("### Retrieving books.....")
+            return { ...store, APICallInProgress: true, APICallFailed: null }
+        }
+        case "GET_VIEW_FINISHED": {
+            console.log('### Retrieval finished!')
+            console.log(action.payload)
+            return { ...store, page: action.payload, APICallInProgress: false }
         }
 
         //ADD
@@ -28,7 +51,7 @@ export default function reducer(store = initialState, action) {
 
         case "ADD_BOOK_FINISHED": {
             console.log('### Add finished!')
-            return { ...store, bookData: add(store.bookData, action.payload), APICallInProgress: false }
+            return { ...store, page: add(store.bookData, action.payload), APICallInProgress: false }
         }
 
         //EDIT
@@ -50,7 +73,7 @@ export default function reducer(store = initialState, action) {
 
         case "DELETE_BOOK_FINISHED": {
             console.log('### Delete finished!')
-            return { ...store, bookData: remove(store.bookData, action.payload), APICallInProgress: false }
+            return { ...store, page: remove(store.bookData, action.payload), APICallInProgress: false }
         }
 
         //SEARCH

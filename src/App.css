@@ -40,6 +40,10 @@ body {
   
 }
 
+input.view-input {
+  width: 25px;
+}
+
 /*Data Table Styles*/
 
 .table-display {

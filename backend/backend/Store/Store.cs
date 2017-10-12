@@ -8,7 +8,8 @@ namespace backend.Store
     public class BookStore : StoreBase
     {
 
-        public IEnumerable<Book> GetBooks()
+        //GET BOOKS // paging
+        public IEnumerable<Book> GetBooks(int qty, int start)
         {
             List<Book> books = new List<Book>();
 
@@ -16,7 +17,9 @@ namespace backend.Store
 
             connection.Open();
 
-            MySqlCommand command = new MySqlCommand("SELECT * FROM tanya_project", connection);
+            MySqlCommand command = new MySqlCommand("SELECT * FROM tanya_project LIMIT @start, @qty", connection);
+            command.Parameters.AddWithValue("@qty", qty);
+            command.Parameters.AddWithValue("@start", start);
 
             using (MySqlDataReader reader = command.ExecuteReader())
             {
@@ -38,7 +41,40 @@ namespace backend.Store
             return books;
         }
 
-        //SEARCH FUNCTION
+        //GET BOOKS // UPDATE VIEW
+        public IEnumerable<Book> GetNewView(int qty, int start)
+        {
+            List<Book> books = new List<Book>();
+
+            var connection = GetConnection();
+
+            connection.Open();
+
+            MySqlCommand command = new MySqlCommand("SELECT * FROM tanya_project LIMIT @start, @limit", connection);
+            command.Parameters.AddWithValue("@limit", qty);
+            command.Parameters.AddWithValue("@start", start);
+
+            using (MySqlDataReader reader = command.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    books.Add(new Book
+                    {
+                        id = (int)reader["id"],
+                        author = (string)reader["author"],
+                        title = (string)reader["title"],
+                        genre = (string)reader["genre"],
+                        year = (int)reader["year"]
+                    });
+                }
+            }
+
+            connection.Close();
+
+            return books;
+        }
+
+        //SEARCH FUNCTION -- IN PROGRESS
         public IEnumerable<Book> SearchBooks(string term)
         {
             List<Book> results = new List<Book>();
@@ -86,6 +122,7 @@ namespace backend.Store
                     "select id from tanya_project where author = @a and title = @t", connection);
                 check_command.Parameters.AddWithValue("@a", book.author);
                 check_command.Parameters.AddWithValue("@t", book.title);
+
 
                 using (MySqlDataReader reader = check_command.ExecuteReader())
                 {
@@ -170,5 +207,107 @@ namespace backend.Store
                 return edited;
             }
         }
+
+
+
+
+
+
+
+
+
+        //ADD MANY BOOKS
+        public Book AddManyBooks(Model.Book book, int i)
+        {
+            bool exists = false;
+            using (var connection = GetConnection())
+            {
+                connection.Open();
+
+                //double check if already exists; if it does, return null 
+                //** WILL NEED TO HANDLE**
+                MySqlCommand check_command = new MySqlCommand(
+                    "select id from tanya_project where author = @z and title = @t", connection);
+                check_command.Parameters.AddWithValue("@a", book.author);
+                check_command.Parameters.AddWithValue("@t", book.title);
+                check_command.Parameters.AddWithValue("@z", i);
+
+                using (MySqlDataReader reader = check_command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        exists = true;
+                    }
+                }
+                if (exists)
+                {
+                    return null;
+                }
+                else
+                {
+                    MySqlCommand command = new MySqlCommand(
+                        "INSERT INTO tanya_project ( author, title, genre, year )VALUES(@bz, @bt, @bg, @by)", connection);
+
+                    //retrieve & handle new id
+                    MySqlCommand id_command = new MySqlCommand("SELECT LAST_INSERT_ID()", connection);
+
+                    command.Parameters.AddWithValue("@ba", book.author);
+                    command.Parameters.AddWithValue("@bt", book.title);
+                    command.Parameters.AddWithValue("@bg", book.genre);
+                    command.Parameters.AddWithValue("@by", book.year);
+                    command.Parameters.AddWithValue("@bz", i);
+
+                    var numInserted = command.ExecuteNonQuery();
+
+                    if (numInserted > 0)
+                    {
+
+                        ulong id = (System.UInt64)id_command.ExecuteScalar();
+                        book.id = Convert.ToInt32(id);
+                    }
+
+
+                    Console.WriteLine("Inserted {0} records!", numInserted);
+
+                    return book;
+                }
+
+            }
+        }
+
+
+        //GET BOOKS
+        public IEnumerable<Book> GetBooks()
+        {
+            List<Book> books = new List<Book>();
+
+            var connection = GetConnection();
+
+            connection.Open();
+
+            MySqlCommand command = new MySqlCommand("SELECT * FROM tanya_project LIMIT 1, 10", connection);
+
+            using (MySqlDataReader reader = command.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    books.Add(new Book
+                    {
+                        id = (int)reader["id"],
+                        author = (string)reader["author"],
+                        title = (string)reader["title"],
+                        genre = (string)reader["genre"],
+                        year = (int)reader["year"]
+                    });
+                }
+            }
+
+            connection.Close();
+
+            return books;
+        }
+
+
+
 	}
 }

@@ -18,6 +18,41 @@ export function getTheBooks(dispatch) {
         })
 }
 
+//RETRIEVE - PAGES
+export function getPagedBooks(dispatch, qty, start) {
+
+    dispatch({
+        type: "GET_PAGE_STARTED"
+    })
+
+    axios.get(BASE_URL + "/pg/" + qty + "/" + start)
+        .then((response) => {
+            dispatch({ type: "GET_PAGE_FINISHED", payload: response.data })
+        })
+        .catch((err) => {
+            dispatch({ type: "CALL_FAILED", payload: err })
+        })
+}
+
+//GET NEW VIEW
+export function changeView(dispatch, qty, start) { //how many to view, where to start from
+
+    dispatch({
+        type: "GET_VIEW_STARTED"
+    })
+
+    axios.get(BASE_URL + "/view/" + qty + "/" + start)
+        .then((response) => {
+            dispatch({ type: "GET_VIEW_FINISHED", payload: response.data })
+        })
+        .catch((err) => {
+            dispatch({ type: "CALL_FAILED", payload: err })
+        })
+}
+
+
+
+
 
 //ADD
 export function addABook(dispatch, newBook) {

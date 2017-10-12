@@ -21,7 +21,10 @@ export default class TableData extends Component {
             genre: '',
             year: '',
             //Search
-            search: ''
+            search: '',
+            //Paging:
+            pg: 0,
+            numberOf: 10,
         }
     }
 
@@ -106,7 +109,6 @@ export default class TableData extends Component {
 
     }
 
-
     searchFor(a) {
         console.log("Search initiating: for--")
         console.log(a)
@@ -116,6 +118,40 @@ export default class TableData extends Component {
         this.setState({ searchFlag: true })
 
     }
+
+    //PAGING - FORWARD
+    getNextPages() {
+
+        let position = this.props.page.length       //the set that you're viewing (length of the page)
+        let qty = this.state.numberOf               //set how many you're viewing
+
+        let where = this.state.pg + position           //updating set + position to change to next set
+
+        this.setState({
+            pg: this.state.pg + position
+        })
+
+        console.log("Which set; position: " + where)
+        console.log("How many to view: " + qty)
+
+        this.props.next(qty, where)
+    }
+
+
+    //SET VIEW NUMBER
+    setView() {
+        console.log("How many to view:")
+        console.log(this.inputView.value)
+
+        let num = this.inputView.value //how many to view
+        let start = this.state.pg //where to start from
+
+        this.setState({ numberOf: this.inputView.value })
+
+        this.props.changeView(num, start)
+
+    }
+
 
 
     render() {
@@ -203,7 +239,7 @@ export default class TableData extends Component {
                                 <tr><td colSpan="6" className="intro">Books:</td></tr>
                                 <tr className="shade"><td>Author</td><td>Title</td><td>Genre</td><td>Year</td>
                                     <td colSpan="2">Actions:</td></tr>
-                                {this.props.books ? this.props.books.map((b) =>
+                                {this.props.page ? this.props.page.map((b) =>
                                     <tr key={b.id + b.author + b.title + b.genre + b.year}>
                                         <td key={b.author}>{b.author}</td>
                                         <td key={b.title}>{b.title}</td>
@@ -216,6 +252,22 @@ export default class TableData extends Component {
                                             onClick={this.remove.bind(this, b)}>Delete</button></td>
                                     </tr>) : null
                                 }
+
+                                <tr><td colSpan="6">
+                                    <button onClick={this.getNextPages.bind(this)}>
+                                        Records {this.state.pg} - {this.state.pg + 9}</button>
+
+                                    <button onClick={this.getNextPages.bind(this)}>Next Page</button><br />
+
+                                    <input type="text" name="howmany"
+                                        onChange={this.changeInputs} placeholder="10" className="view-input"
+                                        ref={TableData => this.inputView = TableData} />
+                                    <button onClick={this.setView.bind(this)}>View</button>
+
+
+                                </td></tr>
+
+
 
                                 <tr><td colSpan="6" className="add">
                                     <input type="text" ref={TableData => this.inputAuthor = TableData}
