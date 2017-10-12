@@ -120,8 +120,11 @@ export function searching(books, thing) {
     for (i; i < bookies.length; i++) {
 
         searchBooks = bookies.filter((b) => {
-                return b.author.toLowerCase().includes(term);
-            })
+            if (b.author.toLowerCase().includes(term)) { return b.author.toLowerCase().includes(term); }
+            if (b.title.toLowerCase().includes(term)) { return b.title.toLowerCase().includes(term); }
+            if (b.genre.toLowerCase().includes(term)) { return b.genre.toLowerCase().includes(term); }
+            if (b.year.toString().includes(thing)) { return b.year.toString().includes(thing); }
+        })
     }
     return searchBooks;
 

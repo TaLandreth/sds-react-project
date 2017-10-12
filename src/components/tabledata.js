@@ -192,7 +192,7 @@ export default class TableData extends Component {
                 <div className="table-display">
                     <br />
                     <div className="search">
-                        <input type="text" className="s" name="search" placeholder="Search By Author (Beta)"
+                        <input type="text" className="s" name="search" placeholder="Search"
                             onChange={this.changeInputs} />
                         <button onClick={this.searchFor.bind(this, this.state.search)}>Go!</button>
                         <br />

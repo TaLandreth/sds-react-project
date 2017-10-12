@@ -58,6 +58,10 @@ body {
   font-size: 20px;
 }
 
+.edit-display input {
+  width: 200px;
+}
+
 .edit-btns {
   padding: 15px;
 }
