@@ -18,6 +18,22 @@ export function getTheBooks(dispatch) {
         })
 }
 
+//GET COUNT
+export function getCount(dispatch) {
+    
+        dispatch({
+            type: "GET_COUNT_STARTED"
+        })
+    
+        axios.get("http://localhost:5000/api/search")
+            .then((response) => {
+                dispatch({ type: "GET_COUNT_FINISHED", payload: response.data })
+            })
+            .catch((err) => {
+                dispatch({ type: "CALL_FAILED", payload: err })
+            })
+    }
+
 //RETRIEVE - PAGES
 export function getPagedBooks(dispatch, qty, start) {
 
@@ -108,6 +124,32 @@ export function searchFor(dispatch, author) {
         type: "SEARCH_STARTED"
     })
 
-    dispatch({ type: "SEARCH_FINISHED", payload: author })
+    axios.get("http://localhost:5000/api/search/" + author)
+    .then((response) => {
+        dispatch({ type: "SEARCH_FINISHED", payload: response.data })
+    })
+    .catch((err) => {
+        dispatch({ type: "CALL_FAILED", payload: err })
+    })
 
 }
+
+//SORT ---------------------- BETA
+export function sortBy(dispatch, sortObj) {
+    
+        dispatch({
+            type: "SORT_STARTED"
+        })
+
+        console.log("In dispatcher:")
+        console.log(sortObj)
+    
+        axios.post(BASE_URL + "/sorting", sortObj)
+        .then((response) => {
+            dispatch({ type: "SORT_FINISHED", payload: response.data })
+        })
+        .catch((err) => {
+            dispatch({ type: "CALL_FAILED", payload: err })
+        })
+    
+    }

@@ -1,14 +1,65 @@
 ﻿using System;
 using MySql.Data.MySqlClient;
 using backend.Model;
+using backend.Sort;
 using System.Collections.Generic;
 
 namespace backend.Store
 {
     public class BookStore : StoreBase
     {
+      //GET BOOKS - initial load
+        public IEnumerable<Book> GetBooks()
+        {
+            List<Book> books = new List<Book>();
 
-        //GET BOOKS // paging
+            var connection = GetConnection();
+
+            connection.Open();
+
+            MySqlCommand command = new MySqlCommand("SELECT * FROM tanya_project ORDER BY id LIMIT 1, 10", connection);
+
+            using (MySqlDataReader reader = command.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    books.Add(new Book
+                    {
+                        id = (int)reader["id"],
+                        author = (string)reader["author"],
+                        title = (string)reader["title"],
+                        genre = (string)reader["genre"],
+                        year = (int)reader["year"]
+                    });
+                }
+            }
+
+            connection.Close();
+
+            return books;
+        }
+
+        //GET COUNT
+        public int GetCount()
+        {
+            var connection = GetConnection();
+
+            connection.Open();
+
+            MySqlCommand command = new MySqlCommand("SELECT COUNT(id) FROM tanya_project", connection);
+
+            int countOf = Convert.ToInt32(command.ExecuteScalar());
+
+            connection.Close();
+
+            return countOf;
+        }
+
+
+
+
+
+        //GET BOOKS // paging efforts
         public IEnumerable<Book> GetBooks(int qty, int start)
         {
             List<Book> books = new List<Book>();
@@ -17,7 +68,7 @@ namespace backend.Store
 
             connection.Open();
 
-            MySqlCommand command = new MySqlCommand("SELECT * FROM tanya_project LIMIT @start, @qty", connection);
+            MySqlCommand command = new MySqlCommand("SELECT * FROM tanya_project ORDER BY id LIMIT @start, @qty", connection);
             command.Parameters.AddWithValue("@qty", qty);
             command.Parameters.AddWithValue("@start", start);
 
@@ -50,7 +101,7 @@ namespace backend.Store
 
             connection.Open();
 
-            MySqlCommand command = new MySqlCommand("SELECT * FROM tanya_project LIMIT @start, @limit", connection);
+            MySqlCommand command = new MySqlCommand("SELECT * FROM tanya_project ORDER BY id LIMIT @start, @limit", connection);
             command.Parameters.AddWithValue("@limit", qty);
             command.Parameters.AddWithValue("@start", start);
 
@@ -72,39 +123,6 @@ namespace backend.Store
             connection.Close();
 
             return books;
-        }
-
-        //SEARCH FUNCTION -- IN PROGRESS
-        public IEnumerable<Book> SearchBooks(string term)
-        {
-            List<Book> results = new List<Book>();
-
-            var connection = GetConnection();
-
-            connection.Open();
-
-            MySqlCommand command = new MySqlCommand("SELECT * FROM tanya_project WHERE author LIKE '@a", connection);
-
-            command.Parameters.AddWithValue("@a", term);
-
-            using (MySqlDataReader reader = command.ExecuteReader())
-            {
-                while (reader.Read())
-                {
-                    results.Add(new Book
-                    {
-                        id = (int)reader["id"],
-                        author = (string)reader["author"],
-                        title = (string)reader["title"],
-                        genre = (string)reader["genre"],
-                        year = (int)reader["year"]
-                    });
-                }
-            }
-
-            connection.Close();
-
-            return results;
         }
 
 
@@ -209,6 +227,84 @@ namespace backend.Store
         }
 
 
+        //SEARCH FUNCTION
+        public IEnumerable<Book> SearchBooks(string term)
+        {
+            List<Book> results = new List<Book>();
+
+            var connection = GetConnection();
+
+            connection.Open();
+
+            MySqlCommand command = new MySqlCommand("SELECT * FROM tanya_project WHERE author LIKE @a OR title LIKE @a OR  genre LIKE @a OR  year LIKE @a", connection);
+
+            command.Parameters.AddWithValue("@a", '%' + term + '%');
+
+            using (MySqlDataReader reader = command.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    results.Add(new Book
+                    {
+                        id = (int)reader["id"],
+                        author = (string)reader["author"],
+                        title = (string)reader["title"],
+                        genre = (string)reader["genre"],
+                        year = (int)reader["year"]
+                    });
+                }
+            }
+
+            connection.Close();
+
+            return results;
+        }
+
+        //SORTING ATTEMPTS -----------------------------------------------------
+
+        public IEnumerable<Book> GetSort(SortedBooks sortObj)
+        {
+            List<Book> results = new List<Book>();
+
+            var connection = GetConnection();
+
+            connection.Open();
+
+            var authSort = sortObj.GetType().GetProperty("authorDirection");
+            string authorDirection = authSort.GetValue(sortObj, null) as string;
+
+            var titlSort = sortObj.GetType().GetProperty("titleDirection");
+            string titleDirection = titlSort.GetValue(sortObj, null) as string;
+
+            var genrSort = sortObj.GetType().GetProperty("genreDirection");
+            string genreDirection = genrSort.GetValue(sortObj, null) as string;
+
+            var ySort = sortObj.GetType().GetProperty("yearDirection");
+            string yearDirection = genrSort.GetValue(sortObj, null) as string;
+
+            string commandText = "SELECT * FROM tanya_project ORDER BY author " +  authorDirection + ", title " + titleDirection + ", genre " + genreDirection + ", year " + yearDirection + " LIMIT 1, 10";
+
+            MySqlCommand command = new MySqlCommand(commandText, connection);
+
+            using (MySqlDataReader reader = command.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    results.Add(new Book
+                    {
+                        id = (int)reader["id"],
+                        author = (string)reader["author"],
+                        title = (string)reader["title"],
+                        genre = (string)reader["genre"],
+                        year = (int)reader["year"]
+                    });
+                }
+            }
+
+            connection.Close();
+
+            return results;
+        }
 
 
 
@@ -216,6 +312,7 @@ namespace backend.Store
 
 
 
+        //---------------- onetime use ----------------------------------
         //ADD MANY BOOKS
         public Book AddManyBooks(Model.Book book, int i)
         {
@@ -275,37 +372,6 @@ namespace backend.Store
             }
         }
 
-
-        //GET BOOKS
-        public IEnumerable<Book> GetBooks()
-        {
-            List<Book> books = new List<Book>();
-
-            var connection = GetConnection();
-
-            connection.Open();
-
-            MySqlCommand command = new MySqlCommand("SELECT * FROM tanya_project LIMIT 1, 10", connection);
-
-            using (MySqlDataReader reader = command.ExecuteReader())
-            {
-                while (reader.Read())
-                {
-                    books.Add(new Book
-                    {
-                        id = (int)reader["id"],
-                        author = (string)reader["author"],
-                        title = (string)reader["title"],
-                        genre = (string)reader["genre"],
-                        year = (int)reader["year"]
-                    });
-                }
-            }
-
-            connection.Close();
-
-            return books;
-        }
 
 
 

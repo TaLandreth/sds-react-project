@@ -9,10 +9,15 @@ namespace backend.Store
         {
             MySqlConnection connection = new MySqlConnection
             {
-                ConnectionString = "server=sds-incubator.crzqpu8yygjb.us-east-1.rds.amazonaws.com;user id=admin;password=b849e2beafee4899b8aa032544570f4c;persistsecurityinfo=True;port=3306;database=incubator;SslMode=none;"
+                //ConnectionString = "server=sds-incubator.crzqpu8yygjb.us-east-1.rds.amazonaws.com;user id=admin;password=b849e2beafee4899b8aa032544570f4c;persistsecurityinfo=True;port=3306;database=incubator;SslMode=none;"
+                ConnectionString = "server=localhost;user id=root;password=Silver34;port=3306;database=sys;SslMode=none;"
+            
             };
 
             return connection;
         }
     }
 }
+
+
+//ConnectionString = "server=localhost;user id=root;password=Silver34;persistsecurityinfo=True;port=3306;database=sys;SslMode=none;"

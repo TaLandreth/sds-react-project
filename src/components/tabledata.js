@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
-import '../App.css';
+import ReactPaginate from 'react-paginate'
+import '../App.css'
 import BookModel from '../models/bookmodel'
 
 export default class TableData extends Component {
@@ -22,11 +23,27 @@ export default class TableData extends Component {
             year: '',
             //Search
             search: '',
+            countOf: '',
             //Paging:
-            pg: 0,
-            numberOf: 10,
+            pg: 0, //position viewing
+            numberOf: 10, //how many to view
+            pgNumbers: 5, //how many page #s to display
+            activePage: 0,
+
+            //Sorting:
+            //query object - 
+            authorFlag: false,
+            titleFlag: false,
+            genreFlag: false,
+            yearFlag: false,
+            authorDirection: 'ASC',
+            titleDirection: 'ASC',
+            genreDirection: 'ASC',
+            yearDirection: 'ASC'
         }
     }
+
+
 
     //CONSOLIDATE CHANGE HANDLERS:
     //copied from Kristen's fantastic idea!
@@ -109,34 +126,15 @@ export default class TableData extends Component {
 
     }
 
+    //----------------------- ** ALSO NEED TO ENACT PAGING FOR SEARCH RESULTS
     searchFor(a) {
+        this.setState({ searchFlag: true })
         console.log("Search initiating: for--")
         console.log(a)
 
         this.props.onSearch(a)
 
-        this.setState({ searchFlag: true })
-
     }
-
-    //PAGING - FORWARD
-    getNextPages() {
-
-        let position = this.props.page.length       //the set that you're viewing (length of the page)
-        let qty = this.state.numberOf               //set how many you're viewing
-
-        let where = this.state.pg + position           //updating set + position to change to next set
-
-        this.setState({
-            pg: this.state.pg + position
-        })
-
-        console.log("Which set; position: " + where)
-        console.log("How many to view: " + qty)
-
-        this.props.next(qty, where)
-    }
-
 
     //SET VIEW NUMBER
     setView() {
@@ -146,15 +144,117 @@ export default class TableData extends Component {
         let num = this.inputView.value //how many to view
         let start = this.state.pg //where to start from
 
-        this.setState({ numberOf: this.inputView.value })
+        if (isNaN(this.inputView.value) || (num % 1) !== 0) {
+            alert("Please enter a valid number")
+        }
 
-        this.props.changeView(num, start)
+        else {
+
+            this.setState({ numberOf: this.inputView.value })
+            this.props.changeView(num, start)
+        }
+    }
+
+    //TRYING TO SHOW PAGES TO VIEW;
+    handlePageChange(pageNumber) {
+
+        let currentPage = this.state.pg           //current position
+        let qty = this.state.numberOf               //set how many you're viewing        
+        let fwdPage = currentPage + (pageNumber.selected * qty)
+
+        if (pageNumber.selected === 0) {
+
+            this.setState({
+                pg: pageNumber.selected,
+                activePage: pageNumber.selected
+            })
+
+            this.props.next(qty, currentPage)
+
+        }
+        if (currentPage < fwdPage) {
+
+            let where = fwdPage
+            this.setState({
+                pg: currentPage,
+                activePage: fwdPage
+
+            })
+
+            this.props.next(qty, where)
+
+        }      //updating set + position to change to next set
 
     }
 
+    sortOn(what) {
+        //Use POST to pass in query object with values to sort by
+
+        console.log("Value passed from click:")
+        console.log(what)
+
+        if (what === 'author') {
+            this.setState({
+                authorFlag: !this.state.authorFlag //on invocation, switch flag
+            })
+
+            console.log(this.state.authorFlag)
+
+            if (this.state.authorFlag) {
+                this.setState({ authorDirection: "ASC" })
+            } else { this.setState({ authorDirection: "DESC" }) }
+
+        }
+        if (what === 'title') {
+            this.setState({
+                titleFlag: !this.state.titleFlag //on invocation, switch flag
+            })
+            if (this.state.titleFlag) {
+                this.setState({ titleDirection: "ASC" })
+            } else { this.setState({ titleDirection: "DESC" }) }
+
+        }
+        if (what === 'genre') {
+            this.setState({
+                genreFlag: !this.state.genreFlag //on invocation, switch flag
+            })
+
+            if (this.state.genreFlag) {
+                this.setState({ genreDirection: "ASC" })
+            } else { this.setState({ genreDirection: "DESC" }) }
+
+
+        }
+        if (what === 'year') {
+            this.setState({
+                yearFlag: !this.state.yearFlag //on invocation, switch flag
+            })
+
+            if (this.state.yearFlag) {
+                this.setState({ yearDirection: "ASC" })
+            } else { this.setState({ yearDirection: "DESC" }) }
+
+        }
+
+        let a = this.state.authorDirection
+        let t = this.state.titleDirection
+        let g = this.state.genreDirection
+        let y = this.state.yearDirection
+
+        let sortInstructions = {
+            authorDirection: a,
+            titleDirection: t,
+            genreDirection: g,
+            yearDirection: y
+        }
+
+        this.props.sortRecords(sortInstructions)
+    }
 
 
     render() {
+
+        let records = Math.ceil(this.props.recordCount / this.state.numberOf)
 
         //IF IN EDITING MODE ----------------------------------------------------:
         if (this.state.editFlag) {
@@ -200,7 +300,9 @@ export default class TableData extends Component {
                     <table>
                         <tbody>
                             <tr><td colSpan="6">Books:</td></tr>
-                            <tr className="shade"><td>Author</td><td>Title</td><td>Genre</td><td>Year</td>
+                            <tr className="shade"><td>
+                                Author</td>
+                                <td>Title</td><td>Genre</td><td>Year</td>
                                 <td colSpan="2">Actions:</td></tr>
                             {this.props.search ? this.props.search.map((b) =>
                                 <tr key={b.id + b.author + b.title + b.genre + b.year}>
@@ -237,7 +339,11 @@ export default class TableData extends Component {
                         <table>
                             <tbody>
                                 <tr><td colSpan="6" className="intro">Books:</td></tr>
-                                <tr className="shade"><td>Author</td><td>Title</td><td>Genre</td><td>Year</td>
+                                <tr className="shade">
+                                    <td onClick={this.sortOn.bind(this, "author")}>Author</td>
+                                    <td onClick={this.sortOn.bind(this, "title")}>Title</td>
+                                    <td onClick={this.sortOn.bind(this, "genre")}>Genre</td>
+                                    <td onClick={this.sortOn.bind(this, "year")}>Year</td>
                                     <td colSpan="2">Actions:</td></tr>
                                 {this.props.page ? this.props.page.map((b) =>
                                     <tr key={b.id + b.author + b.title + b.genre + b.year}>
@@ -253,21 +359,28 @@ export default class TableData extends Component {
                                     </tr>) : null
                                 }
 
-                                <tr><td colSpan="6">
-                                    <button onClick={this.getNextPages.bind(this)}>
-                                        Records {this.state.pg} - {this.state.pg + 9}</button>
+                                <tr><td colSpan="6" className="view-buttons">
+                                    <div id="react-paginate">
+                                        <ReactPaginate previousLabel={"previous"}
+                                            nextLabel={"next"}
+                                            breakLabel={<a href="">...</a>}
+                                            breakClassName={"break-me"}
+                                            pageCount={records}
+                                            marginPagesDisplayed={1}
+                                            pageRangeDisplayed={5}
+                                            onPageChange={this.handlePageChange.bind(this)}
+                                            containerClassName={"pagination"}
+                                            subContainerClassName={"pages pagination"}
+                                            activeClassName={"active"} />
+                                    </div></td></tr>
 
-                                    <button onClick={this.getNextPages.bind(this)}>Next Page</button><br />
-
+                                <tr><td colSpan="6" className="view-buttons">
                                     <input type="text" name="howmany"
                                         onChange={this.changeInputs} placeholder="10" className="view-input"
                                         ref={TableData => this.inputView = TableData} />
                                     <button onClick={this.setView.bind(this)}>View</button>
 
-
                                 </td></tr>
-
-
 
                                 <tr><td colSpan="6" className="add">
                                     <input type="text" ref={TableData => this.inputAuthor = TableData}
@@ -282,7 +395,7 @@ export default class TableData extends Component {
                             </tbody>
                         </table>
                     </div>
-                </div>
+                </div >
             )//end return
         }//else
     }//end render

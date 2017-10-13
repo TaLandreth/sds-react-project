@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from "react-redux"
 import '../App.css';
 import TableData from "./tabledata"
-import { getTheBooks, addABook, deleteBook, editBook, searchFor, getPagedBooks, changeView } from "../dispatcher/actions"
+import { getTheBooks, getCount, addABook, deleteBook, editBook, searchFor, getPagedBooks, changeView, sortBy } from "../dispatcher/actions"
 
 class Books extends Component {
     constructor(props) {
@@ -13,11 +13,14 @@ class Books extends Component {
         this.searchData = this.searchData.bind(this)
         this.paging = this.paging.bind(this)
         this.view = this.view.bind(this)
+        this.sort = this.sort.bind(this)
         
     }
 
     componentDidMount() {
         getTheBooks(this.props.dispatch)
+        getCount(this.props.dispatch)
+        
     }//end startup
 
     addData(newBook) {
@@ -39,7 +42,6 @@ class Books extends Component {
     }
 
     paging(position, qty){
-
         console.log("before sending to dispatcher:")
         console.log(position)
         console.log(qty)
@@ -53,22 +55,32 @@ class Books extends Component {
         changeView(this.props.dispatch, qty, start) //how many to view, where to start from
     }
 
+    sort(sortInst) {
+        console.log("Sort Instructions:")
+        console.log(sortInst)
+
+        sortBy(this.props.dispatch, sortInst)
+    }
+
     render() {
         let bookies = this.props.bookList
         let searchies = this.props.searchResults
         let page = this.props.page
+        let count = this.props.recordCount
 
         return (
             <div className="table-display">
-                <TableData books={bookies}
+                <TableData books={bookies}      /*display all books; not implementing anymore*/
                     onEdit={this.editData}
                     onDelete={this.deleteData}
                     onAdd={this.addData}
-                    onSearch={this.searchData}
-                    search={searchies}
-                    page={page}
-                    next={this.paging}
-                    changeView={this.view} />
+                    onSearch={this.searchData}  /*search function*/
+                    search={searchies}          /*Search Results*/
+                    page={page}                 /*paging RESULTS -- replaces 'books'*/
+                    next={this.paging}          /*handle paging*/
+                    changeView={this.view}      /*change how many to view at a time*/
+                    recordCount={count} 
+                    sortRecords={this.sort}/>
             </div>
         )
     }
@@ -78,6 +90,7 @@ export default connect(
     store => ({
         bookList: store.bookData,
         searchResults: store.searchList,
-        page: store.page
+        page: store.page,
+        recordCount: store.recordCount
     })
 )(Books);

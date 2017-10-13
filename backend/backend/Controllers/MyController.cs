@@ -7,22 +7,11 @@ using backend.Store;
 using Microsoft.AspNetCore.Mvc;
 using MySql.Data.MySqlClient;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace backend.Controllers
 {
     [Route("api/tanya_project")]
     public class MyController : Controller
     {
-        //GET ALL BOOKS
-        [HttpGet("{qty}/{start}")]
-        public IActionResult RetrieveBooks(int qty, int start)
-        {
-            var bookcase = new BookStore().GetBooks(qty,start);
-            return new ObjectResult(bookcase);
-        }
-
-
         //GET ALL BOOKS
         [HttpGet]
         public IActionResult RetrieveBooks()
@@ -30,6 +19,7 @@ namespace backend.Controllers
             var bookcase = new BookStore().GetBooks();
             return new ObjectResult(bookcase);
         }
+
 
         //Add new book
         [HttpPost]
@@ -53,7 +43,7 @@ namespace backend.Controllers
 
         }
 
-        // DELETE
+        // DELETE BOOK
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
@@ -80,28 +70,5 @@ namespace backend.Controllers
 
     }//end controller
 
-    [Route("api/tanya_project/view")]
-    public class ViewController : Controller
-    {
-        //GET ALL BOOKS
-        [HttpGet("{qty}/{start}")]
-        public IActionResult RetrieveBooks(int qty, int start)
-        {
-            var bookcase = new BookStore().GetNewView(qty, start);
-            return new ObjectResult(bookcase);
-        }
-    }
-
-    [Route("api/tanya_project/pg")]
-    public class PagingController : Controller
-    {
-        //GET ALL BOOKS
-        [HttpGet("{qty}/{start}")]
-        public IActionResult RetrieveBooks(int qty, int start)
-        {
-            var bookcase = new BookStore().GetBooks(qty, start);
-            return new ObjectResult(bookcase);
-        }
-    }
 }
 

@@ -1,7 +1,8 @@
 let initialState = {
     bookData: [],
     searchList: [],
-    page: []
+    page: [],
+    recordCount: null
 }
 export default function reducer(store = initialState, action) {
 
@@ -19,6 +20,16 @@ export default function reducer(store = initialState, action) {
         case "GET_BOOKS_FINISHED": {
             console.log('### Retrieval finished!')
             return { ...store, page: action.payload, APICallInProgress: false }
+        }
+
+        //GET COUNT
+        case "GET_COUNT_STARTED": {
+            console.log("### Counting books.....")
+            return { ...store, APICallInProgress: true, APICallFailed: null }
+        }
+        case "GET_COUNT_FINISHED": {
+            console.log('### Counting finished!')
+            return { ...store, recordCount: action.payload, APICallInProgress: false }
         }
 
         //GET PAGE:
@@ -51,7 +62,7 @@ export default function reducer(store = initialState, action) {
 
         case "ADD_BOOK_FINISHED": {
             console.log('### Add finished!')
-            return { ...store, page: add(store.bookData, action.payload), APICallInProgress: false }
+            return { ...store, page: add(store.page, action.payload), APICallInProgress: false }
         }
 
         //EDIT
@@ -62,7 +73,7 @@ export default function reducer(store = initialState, action) {
 
         case "EDIT_BOOK_FINISHED": {
             console.log('### Edit finished!')
-            return { ...store, bookData: edit(store.bookData, action.payload), APICallInProgress: false }
+            return { ...store, page: edit(store.page, action.payload), APICallInProgress: false }
         }
 
         //DELETE
@@ -73,10 +84,10 @@ export default function reducer(store = initialState, action) {
 
         case "DELETE_BOOK_FINISHED": {
             console.log('### Delete finished!')
-            return { ...store, page: remove(store.bookData, action.payload), APICallInProgress: false }
+            return { ...store, page: remove(store.page, action.payload), APICallInProgress: false }
         }
 
-        //SEARCH
+        //SEARCH ------------------------
         case "SEARCH_STARTED": {
             console.log("### Searching for.....")
             return { ...store, APICallInProgress: true, APICallFailed: null }
@@ -84,7 +95,18 @@ export default function reducer(store = initialState, action) {
 
         case "SEARCH_FINISHED": {
             console.log('### Search finished!')
-            return { ...store, searchList: searching(store.bookData, action.payload), APICallInProgress: false }
+            return { ...store, searchList: action.payload, APICallInProgress: false }
+        }
+
+        //SORT ------------------------
+        case "SORT_STARTED": {
+            console.log("### Sorting.....")
+            return { ...store, APICallInProgress: true, APICallFailed: null }
+        }
+
+        case "SORT_FINISHED": {
+            console.log('### Sort finished!')
+            return { ...store, page: action.payload, APICallInProgress: false }
         }
 
         default: {
@@ -132,7 +154,7 @@ export function remove(books, newbook) {
     return newBookArr;
 }
 
-//---------- SEARCHING ------------------
+/* //---------- SEARCHING ------------------
 export function searching(books, thing) {
     let bookies = books.slice()
 
@@ -151,4 +173,4 @@ export function searching(books, thing) {
     }
     return searchBooks;
 
-}
+} */
