@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using backend.Model;
 using backend.Store;
+using backend.Sort;
 using Microsoft.AspNetCore.Mvc;
 using MySql.Data.MySqlClient;
 
@@ -26,10 +27,10 @@ namespace backend.Controllers
     public class PagingController : Controller
     {
         //GET ALL BOOKS
-        [HttpGet("{qty}/{start}")]
-        public IActionResult RetrieveBooks(int qty, int start)
+        [HttpPost("{qty}/{start}")]
+        public IActionResult RetrieveBooks(int qty, int start, [FromBody]SortedBooks sortObj)
         {
-            var bookcase = new BookStore().GetBooks(qty, start);
+            var bookcase = new BookStore().GetBooks(qty, start, sortObj);
             return new ObjectResult(bookcase);
         }
     }

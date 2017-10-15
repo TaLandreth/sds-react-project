@@ -35,13 +35,17 @@ export function getCount(dispatch) {
     }
 
 //RETRIEVE - PAGES
-export function getPagedBooks(dispatch, qty, start) {
+export function getPagedBooks(dispatch, qty, start, criteria) {
+
+    console.log("Sort Criteria - dispatcher")        
+    console.log(criteria)
+
 
     dispatch({
         type: "GET_PAGE_STARTED"
     })
 
-    axios.get(BASE_URL + "/pg/" + qty + "/" + start)
+    axios.post(BASE_URL + "/pg/" + qty + "/" + start, criteria)
         .then((response) => {
             dispatch({ type: "GET_PAGE_FINISHED", payload: response.data })
         })

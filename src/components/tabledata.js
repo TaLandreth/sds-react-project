@@ -35,7 +35,9 @@ export default class TableData extends Component {
 
             //Sorting:
             //query object - 
-            sortFlag: true
+            sortFlag: true,
+            column: 'id',
+            direction: 'ASC'
         }
     }
 
@@ -168,12 +170,20 @@ export default class TableData extends Component {
         let qty = this.state.numberOf               //set how many you're viewing        
         let fwdPage = currentPage + (pageNumber.selected * qty)
 
+        let sortCriteria = {
+            column: this.state.column,
+            direction: this.state.direction
+        }
+
         if (pageNumber.selected === 0) {
             this.setState({
                 pg: pageNumber.selected,
                 activePage: pageNumber.selected
             })
-            this.props.next(qty, currentPage)
+
+            console.log("Changing to 1s pg:")
+            console.log(sortCriteria)
+            this.props.next(qty, currentPage, sortCriteria)
         }
         if (currentPage < fwdPage) {
             let where = fwdPage
@@ -181,7 +191,11 @@ export default class TableData extends Component {
                 pg: currentPage,
                 activePage: fwdPage
             })
-            this.props.next(qty, where)
+
+            console.log("Changing to another pg:")
+            console.log(sortCriteria)
+
+            this.props.next(qty, where, sortCriteria)
         }      //updating set + position to change to next set
 
     }
@@ -198,15 +212,20 @@ export default class TableData extends Component {
         if (this.state.sortFlag) {
             direction = "ASC"
         } else { direction = "DESC" }
-        
+
         let num = this.state.numberOf //how many to view
-        
+
         let sortInstructions = {
             column: column,
             direction: direction
         }
-        
+
         this.props.sortRecords(num, sortInstructions)
+
+        this.setState({
+            column: column,
+            direction: direction
+        })
     }//end sort
 
     render() {

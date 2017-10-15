@@ -8,7 +8,7 @@ namespace backend.Store
 {
     public class BookStore : StoreBase
     {
-      //GET BOOKS - initial load
+      //GET BOOKS - initial load --------------------------------------------
         public IEnumerable<Book> GetBooks()
         {
             List<Book> books = new List<Book>();
@@ -37,7 +37,7 @@ namespace backend.Store
             connection.Close();
 
             return books;
-        }
+        }//---------------------------------------------------
 
         //GET COUNT
         public int GetCount()
@@ -56,7 +56,7 @@ namespace backend.Store
         }
 
         //GET BOOKS // paging efforts
-        public IEnumerable<Book> GetBooks(int qty, int start)
+        public IEnumerable<Book> GetBooks(int qty, int start, SortedBooks sortObj)
         {
             List<Book> books = new List<Book>();
 
@@ -64,9 +64,19 @@ namespace backend.Store
 
             connection.Open();
 
-            MySqlCommand command = new MySqlCommand("SELECT * FROM tanya_project ORDER BY id LIMIT @start, @qty", connection);
-            command.Parameters.AddWithValue("@qty", qty);
-            command.Parameters.AddWithValue("@start", start);
+            string commandText = "SELECT * FROM tanya_project LIMIT 10";
+
+            var columnSort = sortObj.GetType().GetProperty("column");
+            string col = columnSort.GetValue(sortObj, null) as string;
+
+            var directionSort = sortObj.GetType().GetProperty("direction");
+            string dir = directionSort.GetValue(sortObj, null) as string;
+
+            commandText = "SELECT * FROM tanya_project ORDER BY " + col + " " + dir + " LIMIT " + start + ", "+ qty;
+
+            MySqlCommand command = new MySqlCommand(commandText, connection);
+            //command.Parameters.AddWithValue("@qty", qty);
+            //command.Parameters.AddWithValue("@start", start);
 
             using (MySqlDataReader reader = command.ExecuteReader())
             {

@@ -41,13 +41,16 @@ class Books extends Component {
         searchFor(this.props.dispatch, data)
     }
 
-    paging(qty, position){
+    paging(qty, position, sortCriteria){
         console.log("Current page")
         console.log(position)
         console.log("Qty")        
         console.log(qty)
+        console.log("Sort Criteria:")        
+        console.log(sortCriteria)
+
         //sending to pagePages in dispatcher the current starting record #
-        getPagedBooks(this.props.dispatch, qty, position)
+        getPagedBooks(this.props.dispatch, qty, position, sortCriteria)
     }
 
     view(qty, start) {
