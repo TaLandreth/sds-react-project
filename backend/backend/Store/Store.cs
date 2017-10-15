@@ -17,7 +17,7 @@ namespace backend.Store
 
             connection.Open();
 
-            MySqlCommand command = new MySqlCommand("SELECT * FROM tanya_project ORDER BY id LIMIT 1, 10", connection);
+            MySqlCommand command = new MySqlCommand("SELECT * FROM tanya_project ORDER BY id LIMIT 10", connection);
 
             using (MySqlDataReader reader = command.ExecuteReader())
             {
@@ -54,10 +54,6 @@ namespace backend.Store
 
             return countOf;
         }
-
-
-
-
 
         //GET BOOKS // paging efforts
         public IEnumerable<Book> GetBooks(int qty, int start)
@@ -101,8 +97,8 @@ namespace backend.Store
 
             connection.Open();
 
-            MySqlCommand command = new MySqlCommand("SELECT * FROM tanya_project ORDER BY id LIMIT @start, @limit", connection);
-            command.Parameters.AddWithValue("@limit", qty);
+            MySqlCommand command = new MySqlCommand("SELECT * FROM tanya_project ORDER BY id LIMIT @start, @qty", connection);
+            command.Parameters.AddWithValue("@qty", qty);
             command.Parameters.AddWithValue("@start", start);
 
             using (MySqlDataReader reader = command.ExecuteReader())
@@ -124,7 +120,6 @@ namespace backend.Store
 
             return books;
         }
-
 
         //ADD BOOK
         public Book AddABook(Model.Book book)
@@ -156,7 +151,7 @@ namespace backend.Store
                 else
                 {
                     MySqlCommand command = new MySqlCommand(
-                        "INSERT INTO tanya_project ( author, title, genre, year )VALUES(@ba, @bt, @bg, @by)", connection);
+                        "INSERT INTO tanya_project ( author, title, genre, year ) VALUES(@ba, @bt, @bg, @by)", connection);
 
                     //retrieve & handle new id
                     MySqlCommand id_command = new MySqlCommand("SELECT LAST_INSERT_ID()", connection);
@@ -170,7 +165,6 @@ namespace backend.Store
 
                     if (numInserted > 0)
                     {
-
                         ulong id = (System.UInt64)id_command.ExecuteScalar();
                         book.id = Convert.ToInt32(id);
                     }
@@ -184,6 +178,7 @@ namespace backend.Store
             }
         }
 
+        //DELETE BOOK
         internal int RemoveBook(int id)
         {
             BookStore bookstore = new BookStore();
@@ -203,6 +198,7 @@ namespace backend.Store
             }
         }
 
+        //EDIT BOOK
         public Book EditedBook(Model.Book edited)
         {
             using (var connection = GetConnection())
@@ -225,7 +221,6 @@ namespace backend.Store
                 return edited;
             }
         }
-
 
         //SEARCH FUNCTION
         public IEnumerable<Book> SearchBooks(string term)
@@ -262,7 +257,7 @@ namespace backend.Store
 
         //SORTING ATTEMPTS -----------------------------------------------------
 
-        public IEnumerable<Book> GetSort(SortedBooks sortObj)
+        public IEnumerable<Book> GetSort(int view, SortedBooks sortObj)
         {
             List<Book> results = new List<Book>();
 
@@ -270,19 +265,56 @@ namespace backend.Store
 
             connection.Open();
 
-            var authSort = sortObj.GetType().GetProperty("authorDirection");
-            string authorDirection = authSort.GetValue(sortObj, null) as string;
+            string commandText = "SELECT * FROM tanya_project ORDER BY id LIMIT 10";
 
-            var titlSort = sortObj.GetType().GetProperty("titleDirection");
-            string titleDirection = titlSort.GetValue(sortObj, null) as string;
+            var columnSort = sortObj.GetType().GetProperty("column");
+            string col = columnSort.GetValue(sortObj, null) as string;
 
-            var genrSort = sortObj.GetType().GetProperty("genreDirection");
-            string genreDirection = genrSort.GetValue(sortObj, null) as string;
+            var directionSort = sortObj.GetType().GetProperty("direction");
+            string dir = directionSort.GetValue(sortObj, null) as string;
 
-            var ySort = sortObj.GetType().GetProperty("yearDirection");
-            string yearDirection = genrSort.GetValue(sortObj, null) as string;
+            if(col == "author")
+            {
+                if (dir == "ASC")
+                { commandText = "SELECT * FROM tanya_project ORDER BY author ASC LIMIT " + view; 
+                }
+                else {
+                    commandText = "SELECT * FROM tanya_project ORDER BY author DESC LIMIT " + view;
+                }
+            }
 
-            string commandText = "SELECT * FROM tanya_project ORDER BY author " +  authorDirection + ", title " + titleDirection + ", genre " + genreDirection + ", year " + yearDirection + " LIMIT 1, 10";
+            if(col == "title"){
+                if (dir == "ASC")
+                {
+                    commandText = "SELECT * FROM tanya_project ORDER BY title ASC LIMIT " + view;
+                }
+                else
+                {
+                    commandText = "SELECT * FROM tanya_project ORDER BY title DESC LIMIT " + view;
+                }
+            }
+            if (col == "genre")
+            {
+                if (dir == "ASC")
+                {
+                    commandText = "SELECT * FROM tanya_project ORDER BY genre ASC LIMIT " + view;
+                }
+                else
+                {
+                    commandText = "SELECT * FROM tanya_project ORDER BY genre DESC LIMIT " + view;
+                }
+            }
+            if (col == "year")
+            {
+                if (dir == "ASC")
+                {
+                    commandText = "SELECT * FROM tanya_project ORDER BY year ASC LIMIT " + view;
+                }
+                else
+                {
+                    commandText = "SELECT * FROM tanya_project ORDER BY year DESC LIMIT " + view;
+                }
+            }
 
             MySqlCommand command = new MySqlCommand(commandText, connection);
 
@@ -305,10 +337,6 @@ namespace backend.Store
 
             return results;
         }
-
-
-
-
 
 
 
@@ -371,9 +399,6 @@ namespace backend.Store
 
             }
         }
-
-
-
 
 	}
 }

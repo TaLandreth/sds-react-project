@@ -135,7 +135,7 @@ export function searchFor(dispatch, author) {
 }
 
 //SORT ---------------------- BETA
-export function sortBy(dispatch, sortObj) {
+export function sortBy(dispatch, num, sortObj) {
     
         dispatch({
             type: "SORT_STARTED"
@@ -144,7 +144,7 @@ export function sortBy(dispatch, sortObj) {
         console.log("In dispatcher:")
         console.log(sortObj)
     
-        axios.post(BASE_URL + "/sorting", sortObj)
+        axios.post(BASE_URL + "/sorting/" + num, sortObj)
         .then((response) => {
             dispatch({ type: "SORT_FINISHED", payload: response.data })
         })

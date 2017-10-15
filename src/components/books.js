@@ -41,25 +41,26 @@ class Books extends Component {
         searchFor(this.props.dispatch, data)
     }
 
-    paging(position, qty){
-        console.log("before sending to dispatcher:")
+    paging(qty, position){
+        console.log("Current page")
         console.log(position)
+        console.log("Qty")        
         console.log(qty)
         //sending to pagePages in dispatcher the current starting record #
-        getPagedBooks(this.props.dispatch, position, qty)
+        getPagedBooks(this.props.dispatch, qty, position)
     }
 
     view(qty, start) {
         console.log("in Books change view")
-        console.log("Position " + start + "Qty " + qty )
+        console.log("Position " + start + ", Qty " + qty )
         changeView(this.props.dispatch, qty, start) //how many to view, where to start from
     }
 
-    sort(sortInst) {
+    sort(num, sortInst) {
         console.log("Sort Instructions:")
         console.log(sortInst)
 
-        sortBy(this.props.dispatch, sortInst)
+        sortBy(this.props.dispatch, num, sortInst)
     }
 
     render() {

@@ -9,11 +9,9 @@ using MySql.Data.MySqlClient;
 
 namespace backend.Controllers
 {
-
     [Route("api/search")]
     public class Search : Controller
     {
-
         //SEARCH FOR AUTHOR BOOKS
         [HttpGet("{thing}")]
         public IActionResult SearchBooks(string thing)
@@ -22,7 +20,6 @@ namespace backend.Controllers
 
             return new ObjectResult(found);
         }
-
 
         //GET COUNT
         [HttpGet]

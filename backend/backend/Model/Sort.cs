@@ -5,9 +5,7 @@ namespace backend.Sort
 {
 	public class SortedBooks
 	{
-        public string authorDirection { get; set; }
-        public string titleDirection { get; set; }
-        public string genreDirection { get; set; }
-        public string yearDirection { get; set; }
+        public string column { get; set; }
+        public string direction { get; set; }
 	}
 }

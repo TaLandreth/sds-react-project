@@ -14,12 +14,12 @@ namespace backend.Controllers
     public class SortController : Controller
     {
         //Sort the books
-        [HttpPost]
-        public IActionResult SortBooks([FromBody]SortedBooks sortObj)
+        [HttpPost("{view}")]
+        public IActionResult SortBooks(int view, [FromBody]SortedBooks sortObj)
         {
             Console.Write(sortObj);
 
-            var sortResults = new BookStore().GetSort(sortObj);
+            var sortResults = new BookStore().GetSort(view, sortObj);
 
             return new ObjectResult(sortResults);
         }
