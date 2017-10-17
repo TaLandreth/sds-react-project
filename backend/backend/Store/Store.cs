@@ -3,6 +3,7 @@ using MySql.Data.MySqlClient;
 using backend.Model;
 using backend.Sort;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 
 namespace backend.Store
 {
@@ -55,81 +56,127 @@ namespace backend.Store
             return countOf;
         }
 
-        //GET BOOKS // paging efforts
-        public IEnumerable<Book> GetBooks(int qty, int start, SortedBooks sortObj)
+        //GET BOOKS // paging efforts INCLUDING sorting
+        public IEnumerable<Book> GetBooks(SortedBooks sortObj)
         {
             List<Book> books = new List<Book>();
 
             var connection = GetConnection();
 
-            connection.Open();
+            var startVal = sortObj.GetType().GetProperty("startVal");
+            int starting = Convert.ToInt32(startVal.GetValue(sortObj, null));
 
-            string commandText = "SELECT * FROM tanya_project LIMIT 10";
+            var viewAmt = sortObj.GetType().GetProperty("viewAmt");
+            int viewing = Convert.ToInt32(viewAmt.GetValue(sortObj, null));
 
-            var columnSort = sortObj.GetType().GetProperty("column");
+            var columnSort = sortObj.GetType().GetProperty("sortVal");
             string col = columnSort.GetValue(sortObj, null) as string;
 
-            var directionSort = sortObj.GetType().GetProperty("direction");
+            var directionSort = sortObj.GetType().GetProperty("sortOrder");
             string dir = directionSort.GetValue(sortObj, null) as string;
 
-            commandText = "SELECT * FROM tanya_project ORDER BY " + col + " " + dir + " LIMIT " + start + ", "+ qty;
+            var filterAuthorStart = sortObj.GetType().GetProperty("filterAuthorStart");
+            string filterAStart = filterAuthorStart.GetValue(sortObj, null) as string;
 
-            MySqlCommand command = new MySqlCommand(commandText, connection);
-            //command.Parameters.AddWithValue("@qty", qty);
-            //command.Parameters.AddWithValue("@start", start);
+            var filterAuthorEnd = sortObj.GetType().GetProperty("filterAuthorEnd");
+            string filterAEnd = filterAuthorEnd.GetValue(sortObj, null) as string;
 
-            using (MySqlDataReader reader = command.ExecuteReader())
+            var filterGenre = sortObj.GetType().GetProperty("filterGenre");
+            string filterG = filterGenre.GetValue(sortObj, null) as string;
+
+            var filterYearStart = sortObj.GetType().GetProperty("filterYearStart");
+            int filterYStart = Convert.ToInt32(filterYearStart.GetValue(sortObj, null));
+
+            var filterYearEnd = sortObj.GetType().GetProperty("filterYearEnd");
+            int filterYEnd = Convert.ToInt32(filterYearEnd.GetValue(sortObj, null));
+
+            Console.WriteLine(starting);
+            Console.WriteLine(viewing);
+            Console.WriteLine(col);
+            Console.WriteLine(dir);
+            Console.WriteLine(filterAStart);
+            Console.WriteLine(filterAEnd);
+            Console.WriteLine(filterGenre);
+            Console.WriteLine(filterYStart);
+            Console.WriteLine(filterYEnd);
+
+            using (connection)
             {
-                while (reader.Read())
+                string sql = "tanya";
+                using (MySqlCommand command = new MySqlCommand(sql, connection))
                 {
-                    books.Add(new Book
+                    command.CommandType = System.Data.CommandType.StoredProcedure;
+
+                    command.Parameters.AddWithValue("@startVal", starting);
+                    command.Parameters.AddWithValue("@viewAmt", viewing);
+                    command.Parameters.AddWithValue("@sortVal", col);
+                    command.Parameters.AddWithValue("@sortOrder", dir);
+                    command.Parameters.AddWithValue("@filterAuthorStart", filterAStart);
+                    command.Parameters.AddWithValue("@filterAuthorEnd", filterAEnd);
+                    command.Parameters.AddWithValue("@filterGenre", filterG);
+                    command.Parameters.AddWithValue("@filterYearStart", filterYStart);
+                    command.Parameters.AddWithValue("@filterYearEnd", filterYEnd);
+
+                    connection.Open();
+                    using (MySqlDataReader reader = command.ExecuteReader())
                     {
-                        id = (int)reader["id"],
-                        author = (string)reader["author"],
-                        title = (string)reader["title"],
-                        genre = (string)reader["genre"],
-                        year = (int)reader["year"]
-                    });
+                        while (reader.Read())
+                        {
+                            books.Add(new Book
+                            {
+                                id = (int)reader["id"],
+                                author = (string)reader["author"],
+                                title = (string)reader["title"],
+                                genre = (string)reader["genre"],
+                                year = (int)reader["year"]
+                            });
+                        }
+                    }
                 }
             }
 
             connection.Close();
-
             return books;
         }
 
         //GET BOOKS // UPDATE VIEW
-        public IEnumerable<Book> GetNewView(int qty, int start)
+       /* public IEnumerable<Book> GetNewView(int qty, int start)
         {
             List<Book> books = new List<Book>();
 
             var connection = GetConnection();
 
-            connection.Open();
-
-            MySqlCommand command = new MySqlCommand("SELECT * FROM tanya_project ORDER BY id LIMIT @start, @qty", connection);
-            command.Parameters.AddWithValue("@qty", qty);
-            command.Parameters.AddWithValue("@start", start);
-
-            using (MySqlDataReader reader = command.ExecuteReader())
+            using (connection)
             {
-                while (reader.Read())
+                string sql = "tanya";
+                using (MySqlCommand command = new MySqlCommand(sql, connection))
                 {
-                    books.Add(new Book
+                    command.CommandType = System.Data.CommandType.StoredProcedure;
+
+                    command.Parameters.AddWithValue("@startVal", start);
+                    command.Parameters.AddWithValue("@viewAmt", qty);
+
+                    connection.Open();
+                    using (MySqlDataReader reader = command.ExecuteReader())
                     {
-                        id = (int)reader["id"],
-                        author = (string)reader["author"],
-                        title = (string)reader["title"],
-                        genre = (string)reader["genre"],
-                        year = (int)reader["year"]
-                    });
+                        while (reader.Read())
+                        {
+                            books.Add(new Book
+                            {
+                                id = (int)reader["id"],
+                                author = (string)reader["author"],
+                                title = (string)reader["title"],
+                                genre = (string)reader["genre"],
+                                year = (int)reader["year"]
+                            });
+                        }
+                    }
                 }
             }
 
             connection.Close();
-
             return books;
-        }
+        } */
 
         //ADD BOOK
         public Book AddABook(Model.Book book)
@@ -239,43 +286,51 @@ namespace backend.Store
 
             var connection = GetConnection();
 
-            connection.Open();
-
-            MySqlCommand command = new MySqlCommand("SELECT * FROM tanya_project WHERE author LIKE @a OR title LIKE @a OR  genre LIKE @a OR  year LIKE @a", connection);
-
-            command.Parameters.AddWithValue("@a", '%' + term + '%');
-
-            using (MySqlDataReader reader = command.ExecuteReader())
+            using (connection)
             {
-                while (reader.Read())
+                string sql = "tanyasearch";
+                using (MySqlCommand command = new MySqlCommand(sql, connection))
                 {
-                    results.Add(new Book
+                    command.CommandType = System.Data.CommandType.StoredProcedure;
+
+                    command.Parameters.AddWithValue("@searchVal", term);
+
+                    connection.Open();
+                    using (MySqlDataReader reader = command.ExecuteReader())
                     {
-                        id = (int)reader["id"],
-                        author = (string)reader["author"],
-                        title = (string)reader["title"],
-                        genre = (string)reader["genre"],
-                        year = (int)reader["year"]
-                    });
+                        while (reader.Read())
+                        {
+                            results.Add(new Book
+                            {
+                                id = (int)reader["id"],
+                                author = (string)reader["author"],
+                                title = (string)reader["title"],
+                                genre = (string)reader["genre"],
+                                year = (int)reader["year"]
+                            });
+                        }
+                    }
                 }
             }
 
             connection.Close();
 
             return results;
-        }
+        }//end search
 
         //SORTING ATTEMPTS -----------------------------------------------------
-
-        public IEnumerable<Book> GetSort(int view, SortedBooks sortObj)
+        /*
+        public IEnumerable<Book> GetSort(SortedBooks sortObj)
         {
             List<Book> results = new List<Book>();
 
             var connection = GetConnection();
 
-            connection.Open();
+            var startVal = sortObj.GetType().GetProperty("startVal");
+            string starting = startVal.GetValue(sortObj, null) as string;
 
-            string commandText = "SELECT * FROM tanya_project ORDER BY id LIMIT 10";
+            var viewAmt = sortObj.GetType().GetProperty("viewAmt");
+            string viewing = viewAmt.GetValue(sortObj, null) as string;
 
             var columnSort = sortObj.GetType().GetProperty("column");
             string col = columnSort.GetValue(sortObj, null) as string;
@@ -283,76 +338,62 @@ namespace backend.Store
             var directionSort = sortObj.GetType().GetProperty("direction");
             string dir = directionSort.GetValue(sortObj, null) as string;
 
-            if(col == "author")
-            {
-                if (dir == "ASC")
-                { commandText = "SELECT * FROM tanya_project ORDER BY author ASC LIMIT " + view; 
-                }
-                else {
-                    commandText = "SELECT * FROM tanya_project ORDER BY author DESC LIMIT " + view;
-                }
-            }
+            var filterAuthor = sortObj.GetType().GetProperty("filterAuthor");
+            string filterA = filterAuthor.GetValue(sortObj, null) as string;
 
-            if(col == "title"){
-                if (dir == "ASC")
-                {
-                    commandText = "SELECT * FROM tanya_project ORDER BY title ASC LIMIT " + view;
-                }
-                else
-                {
-                    commandText = "SELECT * FROM tanya_project ORDER BY title DESC LIMIT " + view;
-                }
-            }
-            if (col == "genre")
-            {
-                if (dir == "ASC")
-                {
-                    commandText = "SELECT * FROM tanya_project ORDER BY genre ASC LIMIT " + view;
-                }
-                else
-                {
-                    commandText = "SELECT * FROM tanya_project ORDER BY genre DESC LIMIT " + view;
-                }
-            }
-            if (col == "year")
-            {
-                if (dir == "ASC")
-                {
-                    commandText = "SELECT * FROM tanya_project ORDER BY year ASC LIMIT " + view;
-                }
-                else
-                {
-                    commandText = "SELECT * FROM tanya_project ORDER BY year DESC LIMIT " + view;
-                }
-            }
+            var filterTitle = sortObj.GetType().GetProperty("filterTitle");
+            string filterT = filterTitle.GetValue(sortObj, null) as string;
 
-            MySqlCommand command = new MySqlCommand(commandText, connection);
+            var filterGenre = sortObj.GetType().GetProperty("filterGenre");
+            string filterG = filterGenre.GetValue(sortObj, null) as string;
 
-            using (MySqlDataReader reader = command.ExecuteReader())
+            var filterYear = sortObj.GetType().GetProperty("filterYear");
+            string filterY = filterYear.GetValue(sortObj, null) as string;
+
+            using (connection)
             {
-                while (reader.Read())
+                string sql = "tanya";
+                using (MySqlCommand command = new MySqlCommand(sql, connection))
                 {
-                    results.Add(new Book
+                    command.CommandType = System.Data.CommandType.StoredProcedure;
+
+                    command.Parameters.AddWithValue("@startVal", starting);
+                    command.Parameters.AddWithValue("@viewAmt", viewing);
+                    command.Parameters.AddWithValue("@sortVal", col);
+                    command.Parameters.AddWithValue("@sortOrder", dir);
+                    command.Parameters.AddWithValue("@filterAuthor", filterA);
+                    command.Parameters.AddWithValue("@filterTitle", filterT);
+                    command.Parameters.AddWithValue("@filterGenre", filterG);
+                    command.Parameters.AddWithValue("@filterYear", filterY);
+
+                    connection.Open();
+                    using (MySqlDataReader reader = command.ExecuteReader())
                     {
-                        id = (int)reader["id"],
-                        author = (string)reader["author"],
-                        title = (string)reader["title"],
-                        genre = (string)reader["genre"],
-                        year = (int)reader["year"]
-                    });
+                        while (reader.Read())
+                        {
+                            results.Add(new Book
+                            {
+                                id = (int)reader["id"],
+                                author = (string)reader["author"],
+                                title = (string)reader["title"],
+                                genre = (string)reader["genre"],
+                                year = (int)reader["year"]
+                            });
+                        }
+                    }
                 }
             }
 
             connection.Close();
 
             return results;
-        }
+        }*/
 
 
 
         //---------------- onetime use ----------------------------------
         //ADD MANY BOOKS
-        public Book AddManyBooks(Model.Book book, int i)
+        /*public Book AddManyBooks(Model.Book book, int i)
         {
             bool exists = false;
             using (var connection = GetConnection())
@@ -408,7 +449,7 @@ namespace backend.Store
                 }
 
             }
-        }
+        }*/
 
-	}
-}
+	}//end bookstore
+}//end namespace

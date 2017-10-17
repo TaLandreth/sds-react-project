@@ -28,20 +28,26 @@ export default class TableData extends Component {
             countOf: '',
 
             //Paging:
-            pg: 0, //position viewing
-            numberOf: 10, //how many to view
             pgNumbers: 5, //how many page #s to display
             activePage: 0,
 
             //Sorting:
-            //query object - 
             sortFlag: true,
-            column: 'id',
-            direction: 'ASC'
+
+            //Filtering:
+            selectVar: '',
+
+            sortVal: 'id',
+            sortOrder: 'ASC',
+            viewAmt: 10,
+            startVal: 0,
+            filterAuthorStart: '',
+            filterAuthorEnd: '',
+            filterGenre: '',
+            filterYearStart: 1,
+            filterYearEnd: 1
         }
     }
-
-
 
     //CONSOLIDATE CHANGE HANDLERS:
     //copied from Kristen's fantastic idea!
@@ -152,50 +158,115 @@ export default class TableData extends Component {
         console.log(this.inputView.value)
 
         let num = this.inputView.value //how many to view
-        let start = this.state.pg //where to start from
 
-        if (isNaN(this.inputView.value) || (num % 1) !== 0 || !/\S/.test(this.inputView.value)) {
+        if (isNaN(this.inputView.value) || (this.state.viewAmt % 1) !== 0 || !/\S/.test(this.inputView.value)) {
             alert("Please enter a valid number")
         }
         else {
-            this.setState({ numberOf: this.inputView.value })
-            this.props.changeView(num, start)
+            this.setState({
+                sortVal: this.state.sortVal,
+                sortOrder: this.state.sortOrder,
+                viewAmt: num,
+                startVal: this.state.startVal,
+                filterAuthorStart: this.state.filterAuthorStart,
+                filterAuthorEnd: this.state.filterAuthorEnd,
+                filterGenre: this.state.filterGenre,
+                filterYearStart: this.state.filterYearStart,
+                filterYearEnd: this.state.filterYearEnd
+            })
+
+            let instructions = Object.assign({},
+                {
+                    sortVal: this.state.sortVal,
+                    sortOrder: this.state.sortOrder,
+                    viewAmt: num,
+                    startVal: this.state.startVal,
+                    filterAuthorStart: this.state.filterAuthorStart,
+                    filterAuthorEnd: this.state.filterAuthorEnd,
+                    filterGenre: this.state.filterGenre,
+                    filterYearStart: this.state.filterYearStart,
+                    filterYearEnd: this.state.filterYearEnd
+                })
+
+            this.props.next(instructions)
         }
     }
 
     //TRYING TO SHOW PAGES TO VIEW;
     handlePageChange(pageNumber) {
 
-        let currentPage = this.state.pg           //current position
-        let qty = this.state.numberOf               //set how many you're viewing        
+        let currentPage = this.state.startVal           //current position
+        let qty = this.state.viewAmt                   //set how many you're viewing        
         let fwdPage = currentPage + (pageNumber.selected * qty)
-
-        let sortCriteria = {
-            column: this.state.column,
-            direction: this.state.direction
-        }
 
         if (pageNumber.selected === 0) {
             this.setState({
-                pg: pageNumber.selected,
-                activePage: pageNumber.selected
-            })
-
-            console.log("Changing to 1s pg:")
-            console.log(sortCriteria)
-            this.props.next(qty, currentPage, sortCriteria)
-        }
-        if (currentPage < fwdPage) {
-            let where = fwdPage
-            this.setState({
-                pg: currentPage,
+                sortVal: this.state.sortVal,
+                sortOrder: this.state.sortOrder,
+                viewAmt: this.state.viewAmt,
+                startVal: pageNumber.selected,
+                filterAuthorStart: this.state.filterAuthorStart,
+                filterAuthorEnd: this.state.filterAuthorEnd,
+                filterGenre: this.state.filterGenre,
+                filterYearStart: this.state.filterYearStart,
+                filterYearEnd: this.state.filterYearEnd,
                 activePage: fwdPage
             })
 
-            console.log("Changing to another pg:")
-            console.log(sortCriteria)
+            let instructions = Object.assign({},
+                {
+                    sortVal: this.state.sortVal,
+                    sortOrder: this.state.sortOrder,
+                    viewAmt: Number(this.state.viewAmt),
+                    startVal: Number(pageNumber.selected),
+                    filterAuthorStart: this.state.filterAuthorStart,
+                    filterAuthorEnd: this.state.filterAuthorEnd,
+                    filterGenre: this.state.filterGenre,
+                    filterYearStart: this.state.filterYearStart,
+                    filterYearEnd: this.state.filterYearEnd
+                })
 
-            this.props.next(qty, where, sortCriteria)
+            instructions.startVal = pageNumber.selected
+
+            console.log("Changing back to 1st pg:")
+            console.log(instructions)
+
+            this.props.next(instructions)
+        }
+        if (currentPage < fwdPage) {
+            //let where = fwdPage
+            this.setState({
+                sortVal: this.state.sortVal,
+                sortOrder: this.state.sortOrder,
+                viewAmt: qty,
+                startVal: fwdPage,
+                filterAuthorStart: this.state.filterAuthorStart,
+                filterAuthorEnd: this.state.filterAuthorEnd,
+                filterGenre: this.state.filterGenre,
+                filterYearStart: this.state.filterYearStart,
+                filterYearEnd: this.state.filterYearEnd,
+                activePage: fwdPage
+            })
+
+            let instructions = Object.assign({},
+                {
+                    sortVal: this.state.sortVal,
+                    sortOrder: this.state.sortOrder,
+                    viewAmt: qty,
+                    startVal: currentPage,
+                    filterAuthorStart: this.state.filterAuthorStart,
+                    filterAuthorEnd: this.state.filterAuthorEnd,
+                    filterGenre: this.state.filterGenre,
+                    filterYearStart: this.state.filterYearStart,
+                    filterYearEnd: this.state.filterYearEnd
+                })
+
+            instructions.startVal = fwdPage
+
+            console.log("Changing to another pg:")
+            console.log(instructions)
+
+            this.props.next(instructions)
         }      //updating set + position to change to next set
 
     }
@@ -213,24 +284,165 @@ export default class TableData extends Component {
             direction = "ASC"
         } else { direction = "DESC" }
 
-        let num = this.state.numberOf //how many to view
+        this.setState({
+            sortVal: column,
+            sortOrder: direction,
+            viewAmt: this.state.viewAmt,
+            startVal: this.state.startVal,
+            filterAuthorStart: this.state.filterAuthorStart,
+            filterAuthorEnd: this.state.filterAuthorEnd,
+            filterGenre: this.state.filterGenre,
+            filterYearStart: this.state.filterYearStart,
+            filterYearEnd: this.state.filterYearEnd
+        })
 
-        let sortInstructions = {
-            column: column,
-            direction: direction
+        let instructions = Object.assign({},
+            {
+                sortVal: column,
+                sortOrder: direction,
+                viewAmt: this.state.viewAmt,
+                startVal: this.state.startVal,
+                filterAuthorStart: this.state.filterAuthorStart,
+                filterAuthorEnd: this.state.filterAuthorEnd,
+                filterGenre: this.state.filterGenre,
+                filterYearStart: this.state.filterYearStart,
+                filterYearEnd: this.state.filterYearEnd
+            })
+
+        console.log("Sort Instructions:")
+        console.log(instructions)
+
+        this.props.next(instructions)
+
+    }//end sort
+
+
+    onFilter(v) {
+
+        let instructions = Object.assign({},
+            {
+                sortVal: this.state.sortVal,
+                sortOrder: this.state.sortOrder,
+                viewAmt: this.state.viewAmt,
+                startVal: this.state.startVal,
+                filterAuthorStart: '',
+                filterAuthorEnd: '',
+                filterGenre: '',
+                filterYearStart: 1,
+                filterYearEnd: 1
+            })
+
+        switch (v) {
+            //CLEAR ALL
+            case "clear":
+                this.setState({
+                    filterAuthorStart: '',
+                    filterAuthorEnd: '',
+                    filterGenre: '',
+                    filterYearStart: 1,
+                    filterYearEnd: 1
+                })
+
+                break;
+            //AUTHOR FILTERS
+            case "M":
+                this.setState({
+                    filterAuthorStart: "A",
+                    filterAuthorEnd: v,
+                    filterGenre: '',
+                    filterYearStart: 1,
+                    filterYearEnd: 1
+                })
+                instructions.filterAuthor = v
+                break;
+            case "Z":
+                this.setState({
+                    filterAuthorStart: "N",
+                    filterAuthorEnd: v,
+                    filterGenre: '',
+                    filterYearStart: 1,
+                    filterYearEnd: 1
+                })
+                instructions.filterAuthor = v
+                break;
+            //GENRE FILTERS
+            case "Fiction":
+                this.setState({
+                    filterAuthorStart: '',
+                    filterAuthorEnd: '',
+                    filterGenre: v,
+                    filterYearStart: 1,
+                    filterYearEnd: 1
+                })
+                instructions.filterGenre = v
+                break;
+            case "NonFiction":
+                this.setState({
+                    filterAuthorStart: '',
+                    filterAuthorEnd: '',
+                    filterGenre: v,
+                    filterYearStart: 1,
+                    filterYearEnd: 1
+                })
+                instructions.filterGenre = v
+                break;
+            //YEAR FILTERS
+            case "1950":
+                this.setState({
+                    filterAuthorStart: '',
+                    filterAuthorEnd: '',
+                    filterGenre: '',
+                    filterYearStart: 1,
+                    filterYearEnd: Number(v)
+                })
+                instructions.filterYearStart = 1
+                instructions.filterYearEnd = Number(v)
+                break;
+            case "2000":
+                this.setState({
+                    filterAuthorStart: '',
+                    filterAuthorEnd: '',
+                    filterGenre: '',
+                    filterYearStart: 1951,
+                    filterYearEnd: Number(v)
+                })
+                instructions.filterYearStart = 1951
+                instructions.filterYearEnd = Number(v)
+                break;
+            case "2017":
+                this.setState({
+                    filterAuthorStart: '',
+                    filterAuthorEnd: '',
+                    filterGenre: '',
+                    filterYearStart: 2001,
+                    filterYearEnd: Number(v)
+                })
+                instructions.filterYearStart = 2001
+                instructions.filterYearEnd = Number(v)
+                break;
         }
 
-        this.props.sortRecords(num, sortInstructions)
+        console.log(instructions)
 
+        this.props.next(instructions)
+    }
+
+    setFilter = (e) => {
+        let filterValue = ''
         this.setState({
-            column: column,
-            direction: direction
+            selectVar: e.target.value
         })
-    }//end sort
+        filterValue = e.target.value
+
+        console.log(filterValue)
+
+        this.onFilter(filterValue)
+    }
+
 
     render() {
 
-        let records = Math.ceil(this.props.recordCount / this.state.numberOf)
+        let records = Math.ceil(this.props.recordCount / this.state.viewAmt)
 
         //IF IN EDITING MODE ----------------------------------------------------:
         if (this.state.editFlag) {
@@ -316,7 +528,20 @@ export default class TableData extends Component {
                     <div className="tabled">
                         <table>
                             <tbody>
-                                <tr><td colSpan="6" className="intro">Books:</td></tr>
+                                <tr><td colSpan="3" className="intro">Books:</td>
+                                    <td colSpan="3" className="intro">
+                                        <select value={this.state.value} onChange={this.setFilter.bind(this)}>
+                                            <option>Filter By: ---- </option>
+                                            <option value="clear">--(clear filter)--</option>
+                                            <option value="M">Author, A-M</option>
+                                            <option value="Z">Author, N-Z</option>
+                                            <option value="Fiction">Genre, Fiction</option>
+                                            <option value="NonFiction">Genre, Non-Fiction</option>
+                                            <option value="1950">Year, up to 1950</option>
+                                            <option value="2000">Year, 1951 to 2000</option>
+                                            <option value="2017">Year, 2001 to 2017</option>
+                                        </select>
+                                    </td></tr>
                                 <tr className="shade">
                                     <td onClick={this.sortOn.bind(this, "author")}>Author</td>
                                     <td onClick={this.sortOn.bind(this, "title")}>Title</td>

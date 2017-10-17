@@ -43,17 +43,6 @@ export default function reducer(store = initialState, action) {
         }
 
 
-        //GET VIEW:
-        case "GET_VIEW_STARTED": {
-            console.log("### Retrieving books.....")
-            return { ...store, APICallInProgress: true, APICallFailed: null }
-        }
-        case "GET_VIEW_FINISHED": {
-            console.log('### Retrieval finished!')
-            console.log(action.payload)
-            return { ...store, page: action.payload, APICallInProgress: false }
-        }
-
         //ADD
         case "ADD_BOOK_STARTED": {
             console.log("### Adding a book.....")
@@ -98,16 +87,6 @@ export default function reducer(store = initialState, action) {
             return { ...store, searchList: action.payload, APICallInProgress: false }
         }
 
-        //SORT ------------------------
-        case "SORT_STARTED": {
-            console.log("### Sorting.....")
-            return { ...store, APICallInProgress: true, APICallFailed: null }
-        }
-
-        case "SORT_FINISHED": {
-            console.log('### Sort finished!')
-            return { ...store, page: action.payload, APICallInProgress: false }
-        }
 
         default: {
             return store
@@ -174,3 +153,28 @@ export function searching(books, thing) {
     return searchBooks;
 
 } */
+
+/* 
+
+        //GET VIEW:
+        case "GET_VIEW_STARTED": {
+            console.log("### Retrieving books.....")
+            return { ...store, APICallInProgress: true, APICallFailed: null }
+        }
+        case "GET_VIEW_FINISHED": {
+            console.log('### Retrieval finished!')
+            console.log(action.payload)
+            return { ...store, page: action.payload, APICallInProgress: false }
+        } */
+
+
+/*         //SORT ------------------------
+        case "SORT_STARTED": {
+            console.log("### Sorting.....")
+            return { ...store, APICallInProgress: true, APICallFailed: null }
+        }
+
+        case "SORT_FINISHED": {
+            console.log('### Sort finished!')
+            return { ...store, page: action.payload, APICallInProgress: false }
+        } */

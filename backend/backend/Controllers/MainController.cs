@@ -12,7 +12,7 @@ namespace backend.Controllers
     [Route("api/tanya_project")]
     public class MyController : Controller
     {
-        //GET ALL BOOKS
+        //GET ALL BOOKS -- retrieve all, initial load
         [HttpGet]
         public IActionResult RetrieveBooks()
         {
@@ -21,7 +21,7 @@ namespace backend.Controllers
         }
 
 
-        //Add new book
+        //ADD BOOK
         [HttpPost]
         public IActionResult AddABook([FromBody]Book newBook)
         {
@@ -54,7 +54,7 @@ namespace backend.Controllers
             return Ok();
         }
 
-        // Edit Book
+        // EDIT BOOK
         [HttpPut("{id}")]
         public IActionResult Put(int id, [FromBody]Book edited)
         {

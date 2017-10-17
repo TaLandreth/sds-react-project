@@ -12,15 +12,12 @@ class Books extends Component {
         this.deleteData = this.deleteData.bind(this)
         this.searchData = this.searchData.bind(this)
         this.paging = this.paging.bind(this)
-        this.view = this.view.bind(this)
-        this.sort = this.sort.bind(this)
-        
     }
 
     componentDidMount() {
         getTheBooks(this.props.dispatch)
         getCount(this.props.dispatch)
-        
+
     }//end startup
 
     addData(newBook) {
@@ -35,35 +32,18 @@ class Books extends Component {
         editBook(this.props.dispatch, book)
     }//end edit
 
-    searchData(data) { 
+    searchData(data) {
         console.log("Sending to dispatcher:")
         console.log(data)
         searchFor(this.props.dispatch, data)
     }
 
-    paging(qty, position, sortCriteria){
-        console.log("Current page")
-        console.log(position)
-        console.log("Qty")        
-        console.log(qty)
-        console.log("Sort Criteria:")        
-        console.log(sortCriteria)
+    paging(queryCriteria) {
+        console.log("Query Criteria:")
+        console.log(queryCriteria)
 
         //sending to pagePages in dispatcher the current starting record #
-        getPagedBooks(this.props.dispatch, qty, position, sortCriteria)
-    }
-
-    view(qty, start) {
-        console.log("in Books change view")
-        console.log("Position " + start + ", Qty " + qty )
-        changeView(this.props.dispatch, qty, start) //how many to view, where to start from
-    }
-
-    sort(num, sortInst) {
-        console.log("Sort Instructions:")
-        console.log(sortInst)
-
-        sortBy(this.props.dispatch, num, sortInst)
+        getPagedBooks(this.props.dispatch, queryCriteria)
     }
 
     render() {
@@ -74,17 +54,16 @@ class Books extends Component {
 
         return (
             <div className="table-display">
-                <TableData books={bookies}      /*display all books; not implementing anymore*/
-                    onEdit={this.editData}
-                    onDelete={this.deleteData}
-                    onAdd={this.addData}
-                    onSearch={this.searchData}  /*search function*/
-                    search={searchies}          /*Search Results*/
-                    page={page}                 /*paging RESULTS -- replaces 'books'*/
-                    next={this.paging}          /*handle paging*/
-                    changeView={this.view}      /*change how many to view at a time*/
-                    recordCount={count} 
-                    sortRecords={this.sort}/>
+   
+                    <TableData books={bookies}      /*display all books on initial load*/
+                        onEdit={this.editData}
+                        onDelete={this.deleteData}
+                        onAdd={this.addData}
+                        onSearch={this.searchData}  /*search function*/
+                        search={searchies}          /*Search Results*/
+                        page={page}                 /*paging RESULTS -- replaces 'books' when moving pages*/
+                        next={this.paging}          /*handle paging*/
+                        recordCount={count} />
             </div>
         )
     }
@@ -98,3 +77,20 @@ export default connect(
         recordCount: store.recordCount
     })
 )(Books);
+
+
+
+
+/*     view(criteria) {
+        console.log("in Books change view")
+        console.log(criteria)
+
+        getPagedBooks(this.props.dispatch, criteria) //how many to view, where to start from
+    }
+
+    sort(num, sortInst) {
+        console.log("Sort Instructions:")
+        console.log(sortInst)
+
+        sortBy(this.props.dispatch, num, sortInst)
+    } */

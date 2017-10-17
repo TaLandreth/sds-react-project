@@ -10,19 +10,19 @@ using MySql.Data.MySqlClient;
 namespace backend.Controllers
 {
     //SORT!
-    [Route("api/tanya_project/sorting")]
+    /*[Route("api/tanya_project/sorting")]
     public class SortController : Controller
     {
         //Sort the books
-        [HttpPost("{view}")]
-        public IActionResult SortBooks(int view, [FromBody]SortedBooks sortObj)
+        [HttpPost]
+        public IActionResult SortBooks([FromBody]SortedBooks sortObj)
         {
             Console.Write(sortObj);
 
-            var sortResults = new BookStore().GetSort(view, sortObj);
+            var sortResults = new BookStore().GetSort(sortObj);
 
             return new ObjectResult(sortResults);
         }
-    }
+    }*/
 }
 

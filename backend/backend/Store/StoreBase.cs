@@ -18,6 +18,3 @@ namespace backend.Store
         }
     }
 }
-
-
-//ConnectionString = "server=localhost;user id=root;password=Silver34;persistsecurityinfo=True;port=3306;database=sys;SslMode=none;"

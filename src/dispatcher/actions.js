@@ -2,7 +2,7 @@ import axios from "axios";
 
 const BASE_URL = "http://localhost:5000/api/tanya_project"
 
-//RETRIEVE
+//RETRIEVE - ALL BOOKS; initial load, no filter/view criteria yet
 export function getTheBooks(dispatch) {
 
     dispatch({
@@ -17,6 +17,27 @@ export function getTheBooks(dispatch) {
             dispatch({ type: "CALL_FAILED", payload: err })
         })
 }
+
+//RETRIEVE - get books as we page, update view, and sort
+export function getPagedBooks(dispatch, criteria) {
+
+    console.log("Query Criteria - dispatcher")
+    console.log(criteria)
+
+
+    dispatch({
+        type: "GET_PAGE_STARTED"
+    })
+
+    axios.post(BASE_URL + "/pg", criteria)
+        .then((response) => {
+            dispatch({ type: "GET_PAGE_FINISHED", payload: response.data })
+        })
+        .catch((err) => {
+            dispatch({ type: "CALL_FAILED", payload: err })
+        })
+}
+
 
 //GET COUNT
 export function getCount(dispatch) {
@@ -33,46 +54,7 @@ export function getCount(dispatch) {
                 dispatch({ type: "CALL_FAILED", payload: err })
             })
     }
-
-//RETRIEVE - PAGES
-export function getPagedBooks(dispatch, qty, start, criteria) {
-
-    console.log("Sort Criteria - dispatcher")        
-    console.log(criteria)
-
-
-    dispatch({
-        type: "GET_PAGE_STARTED"
-    })
-
-    axios.post(BASE_URL + "/pg/" + qty + "/" + start, criteria)
-        .then((response) => {
-            dispatch({ type: "GET_PAGE_FINISHED", payload: response.data })
-        })
-        .catch((err) => {
-            dispatch({ type: "CALL_FAILED", payload: err })
-        })
-}
-
-//GET NEW VIEW
-export function changeView(dispatch, qty, start) { //how many to view, where to start from
-
-    dispatch({
-        type: "GET_VIEW_STARTED"
-    })
-
-    axios.get(BASE_URL + "/view/" + qty + "/" + start)
-        .then((response) => {
-            dispatch({ type: "GET_VIEW_FINISHED", payload: response.data })
-        })
-        .catch((err) => {
-            dispatch({ type: "CALL_FAILED", payload: err })
-        })
-}
-
-
-
-
+    
 
 //ADD
 export function addABook(dispatch, newBook) {
@@ -121,7 +103,7 @@ export function editBook(dispatch, book) {
         })
 }
 
-//SEARCH ---------------------- BETA
+//SEARCH
 export function searchFor(dispatch, author) {
 
     dispatch({
@@ -129,31 +111,53 @@ export function searchFor(dispatch, author) {
     })
 
     axios.get("http://localhost:5000/api/search/" + author)
-    .then((response) => {
-        dispatch({ type: "SEARCH_FINISHED", payload: response.data })
-    })
-    .catch((err) => {
-        dispatch({ type: "CALL_FAILED", payload: err })
-    })
+        .then((response) => {
+            dispatch({ type: "SEARCH_FINISHED", payload: response.data })
+        })
+        .catch((err) => {
+            dispatch({ type: "CALL_FAILED", payload: err })
+        })
 
 }
 
-//SORT ---------------------- BETA
-export function sortBy(dispatch, num, sortObj) {
-    
-        dispatch({
-            type: "SORT_STARTED"
-        })
+//SORT
+/* export function sortBy(dispatch, sortObj) {
 
-        console.log("In dispatcher:")
-        console.log(sortObj)
-    
-        axios.post(BASE_URL + "/sorting/" + num, sortObj)
+    dispatch({
+        type: "SORT_STARTED"
+    })
+
+    console.log("In dispatcher:")
+    console.log(sortObj)
+
+    axios.post(BASE_URL + "/pg/", sortObj)
         .then((response) => {
             dispatch({ type: "SORT_FINISHED", payload: response.data })
         })
         .catch((err) => {
             dispatch({ type: "CALL_FAILED", payload: err })
         })
-    
-    }
+
+} */
+
+
+/* //GET NEW VIEW
+export function changeView(dispatch, criteria) { //how many to view, where to start from
+
+    console.log("Query Criteria - dispatcher")
+    console.log(criteria)
+
+    dispatch({
+        type: "GET_VIEW_STARTED"
+    })
+
+    axios.post(BASE_URL + "/pg/", criteria)
+        .then((response) => {
+            dispatch({ type: "GET_VIEW_FINISHED", payload: response.data })
+        })
+        .catch((err) => {
+            dispatch({ type: "CALL_FAILED", payload: err })
+        })
+} */
+
+

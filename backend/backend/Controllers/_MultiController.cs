@@ -11,7 +11,7 @@ using MySql.Data.MySqlClient;
 
 namespace backend.Controllers
 {
-    [Route("api/add_many")]
+    /*[Route("api/add_many")]
     public class NewController : Controller
     {
         //Add new book
@@ -42,6 +42,6 @@ namespace backend.Controllers
             }
 
         }
-    }//end controller
+    }//end controller*/
 }
 
