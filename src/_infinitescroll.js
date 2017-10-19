@@ -34,7 +34,8 @@ const style = {
     }
   
     generateDivs () {
-      let moreDivs = [];
+      alert("Next")
+      /*let moreDivs = [];
       let count = this.state.divs.length;
       for (let i = 0; i < 30; i++) {
         moreDivs.push(
@@ -45,14 +46,16 @@ const style = {
       }
       setTimeout(() => {
         this.setState({divs: this.state.divs.concat(moreDivs)});
-      }, 500);
+      }, 500);*/
     }
   
     refresh () {
-      this.setState({divs: []});
+      /*this.setState({divs: []});
       setTimeout(() => {
         this.setState({divs});
-      }, 3000);
+      }, 3000);*/
+
+      alert("refresh")
     }
   
     render () {
@@ -60,9 +63,6 @@ const style = {
         <div>
           <h3>{noHeightMessage}</h3>
           <InfiniteScroll
-            pullDownToRefresh
-            pullDownToRefreshContent={<h3 style={{textAlign: 'center'}}>&#8595; Pull down to refresh</h3>}
-            releaseToRefreshContent={<h3 style={{textAlign: 'center'}}>&#8593; Release to refresh</h3>}
             refreshFunction={this.refresh}
             next={this.generateDivs}
             hasMore={true}

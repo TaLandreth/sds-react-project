@@ -1,18 +1,24 @@
 import React, { Component } from 'react';
+import MediaQuery from 'react-responsive'
 import Header from './components/header'
-import Books from './components/books'
+import Bookshelf from './components/bookshelf'
 import './App.css';
 
 class App extends Component {
   render() {
     return (
       <div className="App">
-        <Header />
-        <div className="App-intro">
-          <Books />
-        </div>
+        <MediaQuery query="(min-device-width: 1224px)">
+          <Header />
+          </MediaQuery>
+          <MediaQuery query="(max-device-width: 1224px)">
+            <h3>Books:</h3>
+          </MediaQuery>
+          <div className="App-intro">
+            <Bookshelf />
+          </div>
       </div>
-    );
+        );
   }
 }
 

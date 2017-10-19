@@ -1,7 +1,7 @@
 let initialState = {
     bookData: [],
     searchList: [],
-    page: [],
+    bookshelfContent: [],
     recordCount: null
 }
 export default function reducer(store = initialState, action) {
@@ -11,17 +11,6 @@ export default function reducer(store = initialState, action) {
             console.log("### API Call Failed: " + action.payload)
             return { ...store, APICallInProgress: false, APICallFailed: action.payload }
         }
-
-        //RETRIEVE
-        case "GET_BOOKS_STARTED": {
-            console.log("### Retrieving books.....")
-            return { ...store, APICallInProgress: true, APICallFailed: null }
-        }
-        case "GET_BOOKS_FINISHED": {
-            console.log('### Retrieval finished!')
-            return { ...store, page: action.payload, APICallInProgress: false }
-        }
-
         //GET COUNT
         case "GET_COUNT_STARTED": {
             console.log("### Counting books.....")
@@ -39,9 +28,15 @@ export default function reducer(store = initialState, action) {
         }
         case "GET_PAGE_FINISHED": {
             console.log('### Retrieval finished!')
-            return { ...store, page: action.payload, APICallInProgress: false }
-        }
+            //console.log(store.recordCount)
+            var newContent = store.bookshelfContent.slice()
+            if (store.bookshelfContent.length > store.recordCount) {
+                newContent = store.bookshelfContent.slice()
+            }
+            else { action.payload.forEach(a => newContent.push(a)) }
 
+            return { ...store, bookshelfContent: newContent, APICallInProgress: false }
+        }
 
         //ADD
         case "ADD_BOOK_STARTED": {
@@ -51,7 +46,9 @@ export default function reducer(store = initialState, action) {
 
         case "ADD_BOOK_FINISHED": {
             console.log('### Add finished!')
-            return { ...store, page: add(store.page, action.payload), APICallInProgress: false }
+            console.log(action.payload)
+
+            return { ...store, bookshelfContent: add(store.bookshelfContent, action.payload), APICallInProgress: false }
         }
 
         //EDIT
@@ -62,7 +59,7 @@ export default function reducer(store = initialState, action) {
 
         case "EDIT_BOOK_FINISHED": {
             console.log('### Edit finished!')
-            return { ...store, page: edit(store.page, action.payload), APICallInProgress: false }
+            return { ...store, bookshelfContent: edit(store.bookshelfContent, action.payload), APICallInProgress: false }
         }
 
         //DELETE
@@ -73,7 +70,7 @@ export default function reducer(store = initialState, action) {
 
         case "DELETE_BOOK_FINISHED": {
             console.log('### Delete finished!')
-            return { ...store, page: remove(store.page, action.payload), APICallInProgress: false }
+            return { ...store, bookshelfContent: remove(store.bookshelfContent, action.payload), APICallInProgress: false }
         }
 
         //SEARCH ------------------------
@@ -85,6 +82,28 @@ export default function reducer(store = initialState, action) {
         case "SEARCH_FINISHED": {
             console.log('### Search finished!')
             return { ...store, searchList: action.payload, APICallInProgress: false }
+        }
+
+        //SORT
+        case "SORT_STARTED": {
+            console.log("### Sorting.....")
+            return { ...store, APICallInProgress: true, APICallFailed: null }
+        }
+
+        case "SORT_FINISHED": {
+            console.log('### Sort finished!')
+            return { ...store, bookshelfContent: action.payload, APICallInProgress: false }
+        }
+
+        //SORT
+        case "FILTER_STARTED": {
+            console.log("### Sorting.....")
+            return { ...store, APICallInProgress: true, APICallFailed: null }
+        }
+
+        case "FILTER_FINISHED": {
+            console.log('### Sort finished!')
+            return { ...store, bookshelfContent: action.payload, APICallInProgress: false }
         }
 
 
@@ -169,12 +188,4 @@ export function searching(books, thing) {
 
 
 /*         //SORT ------------------------
-        case "SORT_STARTED": {
-            console.log("### Sorting.....")
-            return { ...store, APICallInProgress: true, APICallFailed: null }
-        }
-
-        case "SORT_FINISHED": {
-            console.log('### Sort finished!')
-            return { ...store, page: action.payload, APICallInProgress: false }
-        } */
+ */

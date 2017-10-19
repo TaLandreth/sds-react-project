@@ -12,6 +12,7 @@
     "react-js-pagination": "^3.0.0",
     "react-paginate": "^5.0.0",
     "react-redux": "^5.0.6",
+    "react-responsive": "^3.0.0",
     "react-scripts": "1.0.14",
     "react-wysiwyg": "^2.2.1",
     "redux": "^3.7.2"

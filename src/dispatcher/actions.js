@@ -19,17 +19,15 @@ export function getTheBooks(dispatch) {
 }
 
 //RETRIEVE - get books as we page, update view, and sort
-export function getPagedBooks(dispatch, criteria) {
+export function getPagedBooks(dispatch, instructions) {
 
-    console.log("Query Criteria - dispatcher")
-    console.log(criteria)
-
+    //console.log(instructions)
 
     dispatch({
         type: "GET_PAGE_STARTED"
     })
 
-    axios.post(BASE_URL + "/pg", criteria)
+    axios.post(BASE_URL + "/pg", instructions)
         .then((response) => {
             dispatch({ type: "GET_PAGE_FINISHED", payload: response.data })
         })
@@ -63,14 +61,14 @@ export function addABook(dispatch, newBook) {
     })
     axios.post(BASE_URL, newBook)
         .then((response) => {
+            console.log(response.data)
+            
             dispatch({ type: "ADD_BOOK_FINISHED", payload: response.data })
         })
         .catch((err) => {
             dispatch({ type: "CALL_FAILED", payload: err })
         })
 }
-
-
 //DELETE
 export function deleteBook(dispatch, book) {
 
@@ -86,7 +84,6 @@ export function deleteBook(dispatch, book) {
             dispatch({ type: "CALL_FAILED", payload: err })
         })
 }
-
 //EDIT
 export function editBook(dispatch, book) {
 
@@ -102,15 +99,14 @@ export function editBook(dispatch, book) {
             dispatch({ type: "CALL_FAILED", payload: err })
         })
 }
-
 //SEARCH
-export function searchFor(dispatch, author) {
+export function searchFor(dispatch, forThis) {
 
     dispatch({
         type: "SEARCH_STARTED"
     })
 
-    axios.get("http://localhost:5000/api/search/" + author)
+    axios.get("http://localhost:5000/api/search/" + forThis)
         .then((response) => {
             dispatch({ type: "SEARCH_FINISHED", payload: response.data })
         })
@@ -121,24 +117,56 @@ export function searchFor(dispatch, author) {
 }
 
 //SORT
-/* export function sortBy(dispatch, sortObj) {
+export function sortBy(dispatch, instructions) {
+
+    console.log('Sort instructions:')
+    console.log(instructions)
 
     dispatch({
         type: "SORT_STARTED"
     })
 
     console.log("In dispatcher:")
-    console.log(sortObj)
+    console.log(instructions)
 
-    axios.post(BASE_URL + "/pg/", sortObj)
+    axios.post(BASE_URL + "/pg", instructions)
         .then((response) => {
+
+            console.log(response.data)
+
             dispatch({ type: "SORT_FINISHED", payload: response.data })
         })
         .catch((err) => {
             dispatch({ type: "CALL_FAILED", payload: err })
         })
 
-} */
+}
+
+//SORT
+export function filterBy(dispatch, instructions) {
+    
+        console.log('Filter instructions:')
+        console.log(instructions)
+    
+        dispatch({
+            type: "FILTER_STARTED"
+        })
+    
+        console.log("In dispatcher:")
+        console.log(instructions)
+    
+        axios.post(BASE_URL + "/pg", instructions)
+            .then((response) => {
+    
+                console.log(response.data)
+    
+                dispatch({ type: "FILTER_FINISHED", payload: response.data })
+            })
+            .catch((err) => {
+                dispatch({ type: "CALL_FAILED", payload: err })
+            })
+    
+    }
 
 
 /* //GET NEW VIEW

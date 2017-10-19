@@ -8,6 +8,7 @@ export default class Header extends Component {
         <header className="App-header">
             <h1 className="App-title">Book Database</h1>
         </header>
+        
         )
     }
 
